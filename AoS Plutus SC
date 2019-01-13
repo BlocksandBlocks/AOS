@@ -1,9 +1,11 @@
 -- Gotta figure out how to compile votes--Attempt Made
 -- Gotta figure out how to write on chain code to compare votes--Attempt Made
--- Gotta figure out what to put on-chain vs. off--Attempt Made
--- Should we lift bounty char and intel char to the ledger????  Maybe not.
+-- Should we lift bounty char and intel char to the ledger????  Probably no reason to do it.
 -- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision
 -- Gotta figure out how to do curation and blacklisting staking (like in Marlowe)
+--The code below just decides if there were more votes in favor of an intel entry or against it.
+{--It doesn’t actually compare # of votes if there was more than one intel entry with more for than against.-}
+{-Might be able to fix the item above by figuring out how to allow each address to only vote “1” once.-}
 
 
 import qualified Language.PlutusTx            as PlutusTx
@@ -22,16 +24,24 @@ jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
    \(curationVote :: [int]) (blackListVote :: [int]) (p :: PendingTx') ->
     let
     
-      voteCarries :: int -> bool
-      voteCarries n = = $$(P.foldr) (\i acc -> $$(P.or) acc (Builtins.greaterThanInteger i n)) False
---need to fix this line to do the addition of all the votes before it calls greaterThanInteger against 0
---where do I put the 0?  what does "/i acc" do?   What do "i" and "n" do after greaterThanInteger?  Should 0 replace them?
+      curationVoteTally :: int -> bool
+      curationVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0) 0 curationVote
+--”$$(P.” is just how you call Prelude functions (e.g. in this case “foldr”)
+--”\” denotes a lambda (i.e. just a function without a name we will only use once)
+--”i” is just the argument we are passing to the nameless function
+--”greatherThanInteger i 0” just checks if “i” is greater than “0”.
+--”acc” is explained in “Folds and Horses” chapter in Learn you a Haskell
+
+      blackListVoteTally :: int -> bool
+      blackListVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0)) 0 blackListVote
+--whatever you do to curationVote Tally, do to blackListVoteTally
+
 
       curationVoteCarries :: Bool
-      curationVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (voteCarries i)) True curationVote
+      curationVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (curationVoteTally i)) True curationVote
 
       blackListVoteCarries :: Bool
-      blackListVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (voteCarries i)) True blackListVote
+      blackListVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (blackListvoteTally i)) True blackListVote
 
     in
 
@@ -55,25 +65,27 @@ blackListVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only 
 postBounty :: [char] -> MockWallet ()
 postBounty char prize = do
   let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
-  in payToScript_ scAddress prize $ DataScript $ Ledger.lifted hashedChar
+  in payToScript_ scAddress prize $ DataScript $ Ledger.lifted hashedCharBounty
   register closeBountyTrigger (closeBountyHandler hashedChar)
+--maybe I don’t need to lift hashedCharBounty here.
 
 postIntel :: [char] -> MockWallet ()
 postIntel char = do
   let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
-  in collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar
+  in collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedCharIntel
+--maybe I don’t need to lift hashedCharIntel here. 
 
 curationVote :: Int -> MockWallet ()
-curationVote num = do
+curationVote numCuration = do
   curationVoteCheck num
   let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
-  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted num
+  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted numCuration
 
 blackListVote :: Int -> MockWallet ()
 blackListVote num = do
   blackListVoteCheck num
   let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
-  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted num
+  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted numBlackList
 
 watchSCAddress :: MockWallet ()
 watchSCAddress = startWatching scAddress
@@ -94,5 +106,7 @@ $(mkFunction 'postIntel)
 $(mkFunction 'watchSCAddress)
 $(mkFunction 'curationVote)
 $(mkFunction 'blackListVote)
+
+
 
 
