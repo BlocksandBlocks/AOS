@@ -27,10 +27,10 @@ jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
       curationVoteTally :: int -> bool
       curationVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0) 0 curationVote
 --”$$(P.” is just how you call Prelude functions (e.g. in this case “foldr”)
---”\” denotes a lambda (i.e. just a function without a name we will only use once)
---”i” is just the argument we are passing to the nameless function
+--”\” denotes a lambda (i.e. just a function without a name we’ll only use once)
+--”i” is just the argument we’re passing to the nameless function
 --”greatherThanInteger i 0” just checks if “i” is greater than “0”.
---”acc” is explained in “Folds and Horses” chapter in Learn you a Haskell
+--”acc” is just an accumulator (explained in “Folds and Horses” chapter in Learn you a Haskell)
 
       blackListVoteTally :: int -> bool
       blackListVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0)) 0 blackListVote
