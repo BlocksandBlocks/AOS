@@ -2,7 +2,7 @@
 Army of Spies
 
 “...but at the length truth will out.”
-					William Shakespeare, The Merchant of Venice
+William Shakespeare, The Merchant of Venice
 
 Army of Spies is a decentralized public blockchain-based approach to the allocation of information resources powered by crowdsourced, bounty-based information discovery and curation mediated through novel smart contract mechanisms for highly accurate bounty response curation via cryptocurrency remuneration. 
 
