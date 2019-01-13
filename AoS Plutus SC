@@ -1,6 +1,7 @@
 -- Gotta figure out how to compile votes--Attempt Made
 -- Gotta figure out how to write on chain code to compare votes--Attempt Made
--- Gotta figure out what to put on-chain vs. off
+-- Gotta figure out what to put on-chain vs. off--Attempt Made
+-- Should we lift bounty char and intel char to the ledger????  Maybe not.
 -- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision
 -- Gotta figure out how to do curation and blacklisting staking (like in Marlowe)
 
@@ -20,14 +21,23 @@ jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
   [||
    \(curationVote :: [int]) (blackListVote :: [int]) (p :: PendingTx') ->
     let
-
     
+      voteCarries :: int -> bool
+      voteCarries n = = $$(P.foldr) (\i acc -> $$(P.or) acc (Builtins.greaterThanInteger i n)) False
+--need to fix this line to do the addition of all the votes before it calls greaterThanInteger against 0
+--where do I put the 0?  what does "/i acc" do?   What do "i" and "n" do after greaterThanInteger?  Should 0 replace them?
 
+      curationVoteCarries :: Bool
+      curationVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (voteCarries i)) True curationVote
 
+      blackListVoteCarries :: Bool
+      blackListVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (voteCarries i)) True blackListVote
 
-    if (curationVote > 0 AND BlackListVote > 0)
-    then ()
-        else $$(P.error) ($$(P.traceH) "Sorry.  Insufficient Intel." ())
+    in
+
+      if curationVoteCarries && blackListVoteCarries
+      then ()
+      else $$(P.error) ($$(P.traceH) "Sorry.  Insufficient Intel." ())
    ||])
 
 scAddress :: Address'
@@ -58,7 +68,6 @@ curationVote num = do
   curationVoteCheck num
   let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
   collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted num
-
 
 blackListVote :: Int -> MockWallet ()
 blackListVote num = do
