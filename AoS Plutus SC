@@ -99,7 +99,7 @@ closeBountyHandler :: ByteString -> EventHandler MockWallet
 closeBountyHandler hashedChar = EventHandler (\_ -> do
  logMsg "No Winning Intel was provided in time."
  logMsg "Ending Bounty and withdrawing money from SC."
- collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar)
+ collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar
 
 $(mkFunction 'postBounty)
 $(mkFunction 'postIntel)
