@@ -1,5 +1,5 @@
 -- Gotta figure out how to compile votes--Attempt Made
--- Gotta figure out how to write on chain code to compare votes
+-- Gotta figure out how to write on chain code to compare votes--Attempt Made
 -- Gotta figure out what to put on-chain vs. off
 -- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision
 -- Gotta figure out how to do curation and blacklisting staking (like in Marlowe)
@@ -18,7 +18,13 @@ import           Playground.Contract
 jbValidator :: ValidatorScript
 jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
   [||
-   \(curationVote :: ByteString) (blackListVote :: ByteString) (p :: PendingTx') ->
+   \(curationVote :: [int]) (blackListVote :: [int]) (p :: PendingTx') ->
+    let
+
+    
+
+
+
     if (curationVote > 0 AND BlackListVote > 0)
     then ()
         else $$(P.error) ($$(P.traceH) "Sorry.  Insufficient Intel." ())
@@ -28,10 +34,13 @@ scAddress :: Address'
 scAddress = Ledger.scriptAddress jbValidator
 
 curationVoteCheck :: Int -> MockWallet ()
-curationVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for Winning Intel or -1 for Insufficient Intel." else pure ()
+curationVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for Winning Intel or -1 for Insufficient Intel."
+  else pure ()
+  
 
 blackListVoteCheck :: Int -> MockWallet ()
-blackListVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for a Good Bounty or -1 for a Blacklisted Bounty." else pure ()
+blackListVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for a Good Bounty or -1 for a Blacklisted Bounty."
+  else pure ()
  
 postBounty :: [char] -> MockWallet ()
 postBounty char prize = do
@@ -76,7 +85,5 @@ $(mkFunction 'postIntel)
 $(mkFunction 'watchSCAddress)
 $(mkFunction 'curationVote)
 $(mkFunction 'blackListVote)
-
-
 
 
