@@ -1,0 +1,77 @@
+-- Gotta figure out how to compile votes
+-- Gotta figure out how to write on chain code to compare votes
+-- Gotta figure out what to put on-chain vs. off
+-- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision
+-- Gotta figure out how to do curation and blacklisting staking (like in Marlowe)
+
+
+import qualified Language.PlutusTx            as PlutusTx
+import qualified Language.PlutusTx.Prelude    as P
+import qualified Language.PlutusTx.Builtins   as Builtins
+import qualified Data.ByteString.Lazy.Char8   as BSLC
+import           Ledger
+import           Ledger.Validation
+import           Wallet
+import           Playground.Contract
+
+
+jbValidator :: ValidatorScript
+jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
+  [||
+   \() () () -> ()
+   ||])
+
+scAddress :: Address'
+scAddress = Ledger.scriptAddress jbValidator
+
+curationVoteCheck :: Int -> MockWallet ()
+curationVoteCheck num = if num /= 0 or 1 then throwOtherError "You may only vote 1 for winning Intel or 0 for insufficient Intel." else pure ()
+
+blackListVoteCheck :: Int -> MockWallet ()
+blackListVoteCheck num = if num /= 0 or 1 then throwOtherError "You may only vote 1 for a Blacklisted Bounty or 0 for an okay Bounty." else pure ()
+
+postBounty :: [char] -> MockWallet ()
+postBounty char prize = do
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
+  in payToScript_ scAddress prize $ DataScript $ Ledger.lifted hashedChar
+  register closeBountyTrigger (closeBountyHandler hashedChar)
+
+postIntel :: [char] -> MockWallet ()
+postIntel char = do
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
+  in collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar
+
+curationVote :: Int -> MockWallet ()
+curationVote num = do
+  curationVoteCheck num
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
+  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted num
+
+
+blackListVote :: Int -> MockWallet ()
+blackListVote num = do
+  blackListVoteCheck num
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
+  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted num
+
+watchSCAddress :: MockWallet ()
+watchSCAddress = startWatching scAddress
+
+closeBountyTrigger :: EventTrigger
+closeBountyTrigger = andT
+  (fundsAtAddressT scAddress $ GEQ 1)
+  (blockHeightT (Interval (Height 100) (Height 101)))
+
+closeBountyHandler :: ByteString -> EventHandler MockWallet
+closeBountyHandler hashedChar = EventHandler (\_ -> do
+ logMsg "No sufficient Intel was provided In Time."
+ logMsg "Ending Bounty and withdrawing money from SC."
+ collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar)
+
+$(mkFunction 'postBounty)
+$(mkFunction 'postIntel)
+$(mkFunction 'watchSCAddress)
+$(mkFunction 'curationVote)
+$(mkFunction 'blackListVote)
+
+
