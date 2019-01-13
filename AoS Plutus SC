@@ -1,4 +1,4 @@
--- Gotta figure out how to compile votes
+-- Gotta figure out how to compile votes--Attempt Made
 -- Gotta figure out how to write on chain code to compare votes
 -- Gotta figure out what to put on-chain vs. off
 -- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision
@@ -18,18 +18,21 @@ import           Playground.Contract
 jbValidator :: ValidatorScript
 jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
   [||
-   \() () () -> ()
+   \(curationVote :: ByteString) (blackListVote :: ByteString) (p :: PendingTx') ->
+    if (curationVote > 0 AND BlackListVote > 0)
+    then ()
+        else $$(P.error) ($$(P.traceH) "Sorry.  Insufficient Intel." ())
    ||])
 
 scAddress :: Address'
 scAddress = Ledger.scriptAddress jbValidator
 
 curationVoteCheck :: Int -> MockWallet ()
-curationVoteCheck num = if num /= 0 or 1 then throwOtherError "You may only vote 1 for winning Intel or 0 for insufficient Intel." else pure ()
+curationVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for Winning Intel or -1 for Insufficient Intel." else pure ()
 
 blackListVoteCheck :: Int -> MockWallet ()
-blackListVoteCheck num = if num /= 0 or 1 then throwOtherError "You may only vote 1 for a Blacklisted Bounty or 0 for an okay Bounty." else pure ()
-
+blackListVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for a Good Bounty or -1 for a Blacklisted Bounty." else pure ()
+ 
 postBounty :: [char] -> MockWallet ()
 postBounty char prize = do
   let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
@@ -64,7 +67,7 @@ closeBountyTrigger = andT
 
 closeBountyHandler :: ByteString -> EventHandler MockWallet
 closeBountyHandler hashedChar = EventHandler (\_ -> do
- logMsg "No sufficient Intel was provided In Time."
+ logMsg "No Winning Intel was provided in time."
  logMsg "Ending Bounty and withdrawing money from SC."
  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar)
 
@@ -73,5 +76,7 @@ $(mkFunction 'postIntel)
 $(mkFunction 'watchSCAddress)
 $(mkFunction 'curationVote)
 $(mkFunction 'blackListVote)
+
+
 
 
