@@ -31,6 +31,8 @@ jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
 --”i” is just the argument we’re passing to the nameless function
 --”greatherThanInteger i 0” just checks if “i” is greater than “0”.
 --”acc” is just an accumulator (explained in “Folds and Horses” chapter in Learn you a Haskell)
+--the 0 after the parenthetical is the starting point for the accumulator
+
 
       blackListVoteTally :: int -> bool
       blackListVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0)) 0 blackListVote
