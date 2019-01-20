@@ -1,8 +1,7 @@
--- Gotta figure out how to compile votes--Attempt Made
--- Gotta figure out how to write on chain code to compare votes--Attempt Made
--- Should we lift bounty char and intel char to the ledger????  Probably no reason to do it.
--- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision
--- Gotta figure out how to do curation and blacklisting staking (like in Marlowe)
+{- Maybe the way to do this is by inlcuding the curation vote and the blacklist vote right in the offchain code probably in
+the postIntel fuction and then make that the only redeemerscript.-}
+-- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision.
+-- Gotta figure out how to do curation and blacklisting staking (like in Marlowe).
 --The code below just decides if there were more votes in favor of an intel entry or against it.
 {--It doesn’t actually compare # of votes if there was more than one intel entry with more for than against.-}
 {-Might be able to fix the item above by figuring out how to allow each address to only vote “1” once.-}
