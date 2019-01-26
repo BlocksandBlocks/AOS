@@ -1,6 +1,8 @@
-{- Maybe the way to do this is by including the curation vote and the blacklist vote right in the offchain code probably in
-the postIntel fuction and then make that the only redeemerscript.-}
-{-Even doing the above, might still need multiple inputs into the onchain code for the two types of votes if the only way to
+{- One way to structure the voting: We make the curation and blacklist vote a single DataScript, 
+then just make postIntel the RedeemerScript with the bounty being provided exogenous to the SC.
+This is just like the latest version (as of 1.25.19 of the Simple Resource Allocation Voting Contract I created.-}
+{- Another way to structure the voting:   Maybe the way to do this is by including the curation vote and the blacklist vote right in the offchain code probably in
+the postIntel fuction and then make that the only redeemerscript.Even doing the above, might still need multiple inputs into the onchain code for the two types of votes if the only way to
 compare what happens in two different wallets is on the chain-}
 -- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision.
 -- Gotta figure out how to do curation and blacklisting staking (like in Marlowe).
