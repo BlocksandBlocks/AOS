@@ -1,0 +1,199 @@
+--THERE ARE ACTUALLY TWO CONTRACTS BELOW
+
+{- Yet another idea as of 1.29.19:
+Another way to structure it is with two contracts. The first contract is where the bounty poster funds with a bounty DataScript
+and the voters are the RedeemerScript.  They get to redeem as long as no blacklist and they actually provide X number of votes.
+But, the redeemed funds don't go to the voters (maybe a % do), they go to a second contract   **NO Idea how to do this part***.   
+In the second contract, the voters provide the DataScript and funds and the Intel Provider provides the Redeemerscript and 
+the redemption is allowed if the votes are sufficient.-}
+
+{- One way to structure the voting: We make the curation and blacklist vote a single DataScript, 
+then just make postIntel the RedeemerScript with the bounty [char] being provided exogenous to the SC.
+This is just like the latest version (as of 1.25.19) of the Simple Resource Allocation Voting Contract I created.-}
+
+{-Another way to do this: learn how to do multiple inputs into the onchain code.-}
+
+{- Another way to structure the voting:   Maybe the way to do this is by including the curation vote and the blacklist vote 
+right in the offchain code probably inthe postIntel fuction and then make that the only redeemerscript.Even doing the above, 
+might still need multiple inputs into the onchain code for the two types of votes if the only way to compare what happens in 
+two different wallets is on the chain-}
+
+-- Gotta figure out how to do % payouts on curation, blacklisting, and intel provision.
+-- Gotta figure out how to do curation and blacklisting staking (like in Marlowe).
+--The code below just decides if there were more votes in favor of an intel entry or against it.
+{--It doesn’t actually compare # of votes if there was more than one intel entry with more for than against.-}
+{-Might be able to fix the item above by figuring out how to allow each address to only vote “1” once.-}
+
+
+{-FIRST CONTRACT-}
+import qualified Language.PlutusTx            as PlutusTx
+import qualified Language.PlutusTx.Prelude    as P
+import qualified Language.PlutusTx.Builtins   as Builtins
+import qualified Data.ByteString.Lazy.Char8   as BSLC
+import           Ledger
+import           Ledger.Validation
+import           Wallet
+import           Playground.Contract
+
+
+jbValidator :: ValidatorScript
+jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
+  [||
+   \(curationAndBlacklistVote :: [int]) (postBounty :: [int]) (p :: PendingTx') ->
+    let
+      
+      curationAndBlacklistVoteTally :: int -> bool
+      curationAndBlacklistVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0) false curationAndBlacklistVote
+      --foldr probably doesn't actually accumulate the votes like this.   
+      
+      curationAndBlacklistVoteCarries :: Bool
+      curationAndBlacklistVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (curationAndBlacklistVoteTally i)) True curationAndBlacklistVote
+
+    in
+
+      if curationandBlacklistVoteCarries
+      then ()
+      else $$(P.error) ($$(P.traceH) "Sorry, insufficient voting." ())
+   ||])
+ 
+scAddress :: Address'
+scAddress = Ledger.scriptAddress jbValidator
+
+curationVoteCheck :: Int -> MockWallet ()
+curationVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for Winning Intel, -1 for Insufficient Intel,
+or -100 for a Blacklisted Bounty."
+  else pure ()
+ 
+postBounty :: [char] -> Value -> MockWallet ()
+postBounty char prize = do
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
+  in payToScript_ scAddress prize $ DataScript $ Ledger.lifted hashedCharBounty
+  register closeBountyTrigger (closeBountyHandler hashedChar)
+
+curationAndBlacklistVote :: Int -> MockWallet ()
+curationAndBlacklistVote numCuration = do
+  curationVoteCheck num
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
+  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted numCuration
+  
+watchSCAddress :: MockWallet ()
+watchSCAddress = startWatching scAddress
+
+closeBountyTrigger :: EventTrigger
+closeBountyTrigger = andT
+  (fundsAtAddressT scAddress $ GEQ 1)
+  (blockHeightT (Interval (Height 100) (Height 101)))
+
+closeBountyHandler :: ByteString -> EventHandler MockWallet
+closeBountyHandler hashedChar = EventHandler (\_ -> do
+ logMsg "Not enough votes provided in time."
+ logMsg "Ending Bounty and withdrawing money from SC."
+ collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar
+
+$(mkFunction 'postBounty)
+$(mkFunction 'postIntel)
+$(mkFunction 'watchSCAddress)
+$(mkFunction 'curationVote)
+$(mkFunction 'blackListVote)
+   
+   
+   
+{-SECOND CONTRACT-}
+import qualified Language.PlutusTx            as PlutusTx
+import qualified Language.PlutusTx.Prelude    as P
+import qualified Language.PlutusTx.Builtins   as Builtins
+import qualified Data.ByteString.Lazy.Char8   as BSLC
+import           Ledger
+import           Ledger.Validation
+import           Wallet
+import           Playground.Contract
+
+
+jbValidator :: ValidatorScript
+jbValidator = ValidatorScript $ Ledger.fromCompiledCode $$(PlutusTx.compile
+  [||
+   \(postIntel :: [int]) (postBounty :: [int]) (p :: PendingTx') ->
+    let
+    
+      curationVoteTally :: int -> bool
+      curationVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0) 0 curationVote
+--”$$(P.” is just how you call Prelude functions (e.g. in this case “foldr”)
+--”\” denotes a lambda (i.e. just a function without a name we’ll only use once)
+--”i” is just the argument we’re passing to the nameless function (in this case, curationVote)
+--”greatherThanInteger i 0” just checks if “i” is greater than “0”.
+--”acc” is just an accumulator (explained in “Folds and Horses” chapter in Learn you a Haskell)
+--the 0 after the parenthetical is the starting point for the accumulator
+
+
+      blackListVoteTally :: int -> bool
+      blackListVoteTally n = = $$(P.foldr) (\i acc -> Builtins.greaterThanInteger (i+acc) 0)) 0 blackListVote
+--whatever you do to curationVote Tally, do to blackListVoteTally
+
+
+      curationVoteCarries :: Bool
+      curationVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (curationVoteTally i)) True curationVote
+
+      blackListVoteCarries :: Bool
+      blackListVoteCarries = $$(P.foldr) (\i acc -> $$(P.and) acc (blackListvoteTally i)) True blackListVote
+
+    in
+
+      if curationVoteCarries && blackListVoteCarries
+      then ()
+      else $$(P.error) ($$(P.traceH) "Sorry.  Insufficient Intel." ())
+   ||])
+
+scAddress :: Address'
+scAddress = Ledger.scriptAddress jbValidator
+
+curationVoteCheck :: Int -> MockWallet ()
+curationVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for Winning Intel or -1 for Insufficient Intel."
+  else pure ()
+  
+
+blackListVoteCheck :: Int -> MockWallet ()
+blackListVoteCheck num = if num /= 1 or (-1) then throwOtherError "You may only vote 1 for a Good Bounty or -1 for a Blacklisted Bounty."
+  else pure ()
+ 
+postBounty :: [char] -> Value -> MockWallet ()
+postBounty char prize = do
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
+  in payToScript_ scAddress prize $ DataScript $ Ledger.lifted hashedCharBounty
+  register closeBountyTrigger (closeBountyHandler hashedChar)
+
+postIntel :: [char] -> MockWallet ()
+postIntel char = do
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show char
+  in collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedCharIntel
+
+curationVote :: Int -> MockWallet ()
+curationVote numCuration = do
+  curationVoteCheck num
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
+  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted numCuration
+
+blackListVote :: Int -> MockWallet ()
+blackListVote num = do
+  blackListVoteCheck num
+  let hashedChar = plcSHA2_256 $ BSLC.pack $ show num
+  collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted numBlackList
+
+watchSCAddress :: MockWallet ()
+watchSCAddress = startWatching scAddress
+
+closeBountyTrigger :: EventTrigger
+closeBountyTrigger = andT
+  (fundsAtAddressT scAddress $ GEQ 1)
+  (blockHeightT (Interval (Height 100) (Height 101)))
+
+closeBountyHandler :: ByteString -> EventHandler MockWallet
+closeBountyHandler hashedChar = EventHandler (\_ -> do
+ logMsg "No Winning Intel was provided in time."
+ logMsg "Ending Bounty and withdrawing money from SC."
+ collectFromScript jbValidator $ RedeemerScript $ Ledger.lifted hashedChar
+
+$(mkFunction 'postBounty)
+$(mkFunction 'postIntel)
+$(mkFunction 'watchSCAddress)
+$(mkFunction 'curationVote)
+$(mkFunction 'blackListVote)
