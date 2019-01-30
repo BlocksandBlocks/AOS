@@ -1,3 +1,9 @@
+{- Leading idea as of 1.29.19:
+Another way to structure it is with two contracts. The first contract is where the bounty poster funds with a bounty DataScript
+and the voters are the RedeemerScript.  They get to redeem as long as no blacklist and they actually provide X number of votes.
+But, the redeemed funds don't go to the voters (maybe a % do), they go to a second contract.   In the second contract, the voters
+provide the DataScript and funds and the Intel Provider provides the Redeemerscript and the redemption is allowed if the votes
+are sufficient.-}
 {- One way to structure the voting: We make the curation and blacklist vote a single DataScript, 
 then just make postIntel the RedeemerScript with the bounty being provided exogenous to the SC.
 This is just like the latest version (as of 1.25.19 of the Simple Resource Allocation Voting Contract I created.-}
