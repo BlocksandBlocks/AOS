@@ -1,5 +1,8 @@
 --THERE ARE ACTUALLY TWO CONTRACTS BELOW
 
+{-Another idea 2.2.19:  we create an only-members-can-vote system as in https://www.ethereum.org/dao-.  
+Maybe look up how similar (non-blockchain) voting contracts in Haskell.}
+
 {- Yet another idea as of 1.29.19:
 Another way to structure it is with two contracts. The first contract is where the bounty poster funds with a bounty DataScript
 and the voters are the RedeemerScript.  They get to redeem as long as no blacklist and they actually provide X number of votes.
