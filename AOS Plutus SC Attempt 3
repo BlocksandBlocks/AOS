@@ -1,6 +1,7 @@
 --THERE ARE ACTUALLY TWO CONTRACTS BELOW
 
 {-Another idea 2.2.19:  we create an only-members-can-vote system as in https://www.ethereum.org/dao-.  
+Maybe the "Liquid Democracy" type contract there can be modified to make the appointed delegat the most voted intell provider?
 Maybe look up how similar (non-blockchain) voting contracts in Haskell.}
 
 {- Yet another idea as of 1.29.19:
