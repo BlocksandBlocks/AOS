@@ -1,8 +1,15 @@
 --THERE ARE ACTUALLY TWO CONTRACTS BELOW
 
+{-Intel Provider IS a voter idea 2.2.19:  what about if the Intel provider IS a VOTER!   
+Intel Provider provides his intel and a vote for himself  (a [char]-> int) as his redeemerScript.  
+His [char} will bet his intel and the int will be the identifier belonging to himself. 
+Then the actual voters will just provide a blank char and a vote.-}
+
+{-Condorcet voting idea 2.2.19: ( http://hackage.haskell.org/package/condorcet-0.0.1/src/Condorcet.hs) may not work because it would declare a
+winner out of the available choices no matter what.  Maybe the curationVoteCheck solves that?-}
+
 {-Another idea 2.2.19:  we create an only-members-can-vote system as in https://www.ethereum.org/dao-.  
-Maybe the "Liquid Democracy" type contract there can be modified to make the appointed delegate the most voted intel provider?
-Maybe look up how similar (non-blockchain) voting contracts in Haskell.}
+Maybe the "Liquid Democracy" type contract there can be modified to make the appointed delegate the most voted intel provider?-}
 
 {- Yet another idea as of 1.29.19:
 Another way to structure it is with two contracts. The first contract is where the bounty poster funds with a bounty DataScript
