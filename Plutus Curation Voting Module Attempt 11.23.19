@@ -1,5 +1,6 @@
 {-Need to make the Curation Stake Forfeits go to the Winning Curators.
---How do we compare votes for two different Intell Providers.
+--How do we compare votes for two different Intell Providers.  Maybe the Curation Stake isn't the vote, maybe the vote happens
+in the DataScript.
 --This was modified from the Crowdfunding Contract on Plutus Playground.
 --Need to include a mechanism for the Bounty Maker to contribute the Intell Bounty and then get the appropriate portions of the
 Intell Bounty out to the Intell Provider and the winning Curaters.  Maybe that mechanism looks a lot like a regular contribution
@@ -42,7 +43,7 @@ data CurationVote = CurationVote
     
 PlutusTx.makeLift ''CurationVote
 
--- | Construct a 'CurationVote' value from the campaign parameters,
+-- | Construct a 'CurationVote' value from the CurationVote parameters,
 --   using the wallet's public key.
 mkCurationVote :: Slot -> Value -> Slot -> Wallet -> CurationVote
 mkCurationVote ddl target curationVoteDdl ownerWallet =
@@ -105,40 +106,35 @@ validCurationStakeForfeit curationVote p =
 -- and different campaigns have different addresses. The Campaign{..} syntax
 -- means that all fields of the 'Campaign' value are in scope
 -- (for example 'campaignDeadline' in l. 70).
-mkValidator :: CurationVote -> CrowdfundingValidator
+mkValidator :: CurationVote -> CurationVoteValidator
 mkValidator c con act p = case act of
     -- the "Reward" branch
     Reward -> validCurationReward c con p
     -- the "Forfeit" branch
     Forfeit -> validCurationStakeForfeit c p
-    
- 
- 
- 
- 
---NEED TO CUSTOMIZE EVERYTHING BELOW THIS LINE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
+   
 
 -- | The validator script that determines whether the campaign owner can
 --   retrieve the funds or the contributors can claim a refund.
---
-contributionScript :: Campaign -> ValidatorScript
-contributionScript cmp  = ValidatorScript $
+
+curationVoteScript :: CurationVote -> ValidatorScript
+curationVoteScript cmp  = ValidatorScript $
     $$(Ledger.compileScript [|| mkValidator ||])
         `Ledger.applyScript`
             Ledger.lifted cmp
 
--- | The address of a [[Campaign]]
-campaignAddress :: Campaign -> Ledger.Address
-campaignAddress = Ledger.scriptAddress . contributionScript
+-- | The address of the [[Intel Bounty]]
+intelBountyAddress :: CurationVote -> Ledger.Address
+inteLBountyAddress = Ledger.scriptAddress . contributionScript 
+ 
+-- | Contribute Votes (i.e. either funds or datascriptvote along with funds) to the Intel Bounty Address.
 
--- | Contribute funds to the campaign (contributor)
---
-contribute :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> Value -> m ()
-contribute deadline target collectionDeadline ownerWallet value = do
-    let cmp = mkCampaign deadline target collectionDeadline ownerWallet
+Curate :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> Value -> m ()
+curate deadline target curationVoteDeadline ownerWallet value = do
+    let cmp = mkCurationVote deadline target CurationVoteDeadline ownerWallet
     ownPK <- ownPubKey
     let ds = DataScript (Ledger.lifted ownPK)
-        range = W.interval 1 (campaignDeadline cmp)
+        range = W.interval 1 (curationVoteDeadline cmp)
 
     -- `payToScript` is a function of the wallet API. It takes a campaign
     -- address, value, and data script, and generates a transaction that
@@ -147,47 +143,49 @@ contribute deadline target collectionDeadline ownerWallet value = do
     -- If we were not interested in the transaction produced by `payToScript`
     -- we could have used `payeToScript_`, which has the same effect but
     -- discards the result.
-    tx <- payToScript range (campaignAddress cmp) value ds
+    tx <- payToScript range (intelBountyAddress cmp) value ds
 
-    logMsg "Submitted contribution"
-
-    -- `register` adds a blockchain event handler on the `refundTrigger`
+    logMsg "Curation Vote Submitted"
+    
+    -- `register` adds a blockchain event handler on the `rewardTrigger`
     -- event. It instructs the wallet to start watching the addresses mentioned
-    -- in the trigger definition and run the handler when the refund condition
+    -- in the trigger definition and run the handler when the reward condition
     -- is true.
-    register (refundTrigger value cmp) (refundHandler (Ledger.hashTx tx) cmp)
+    register (rewardTrigger value cmp) (rewardHandler (Ledger.hashTx tx) cmp)
 
-    logMsg "Registered refund trigger"
+    logMsg "Registered Reward trigger"
+    
+    
 
 -- | Register a [[EventHandler]] to collect all the funds of a campaign
 --
-scheduleCollection :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> m ()
-scheduleCollection deadline target collectionDeadline ownerWallet = do
-    let cmp = mkCampaign deadline target collectionDeadline ownerWallet
-    register (collectFundsTrigger cmp) (EventHandler (\_ -> do
-        logMsg "Collecting funds"
+scheduleForfeit :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> m ()
+scheduleForfeit deadline target curationStakeForfeitDeadline ownerWallet = do
+    let cmp = mkCampaign deadline target curationStakeForfeitDeadline ownerWallet
+    register (forfeitTrigger cmp) (EventHandler (\_ -> do
+        logMsg "Forfeiting Curation Stake"
         let redeemerScript = Ledger.RedeemerScript (Ledger.lifted Collect)
-            range = collectionRange cmp
+            range = curationStakeForfeitRange cmp
         collectFromScript range (contributionScript cmp) redeemerScript))
 
--- | An event trigger that fires when a refund of campaign contributions
--- can be claimed
-refundTrigger :: Value -> Campaign -> EventTrigger
-refundTrigger vl c = andT
-    (fundsAtAddressGeqT (campaignAddress c) vl)
-    (slotRangeT (refundRange c))
+-- | An event trigger that fires when a rewardcan be claimed
+rewardTrigger :: Value -> Campaign -> EventTrigger
+rewardTrigger vl c = andT
+    (fundsAtAddressGeqT (intelBountyAddress c) vl)
+    (slotRangeT (curationStakeForfeitRange c))
 
--- | An event trigger that fires when the funds for a campaign can be collected
-collectFundsTrigger :: Campaign -> EventTrigger
-collectFundsTrigger c = andT
-    (fundsAtAddressGeqT (campaignAddress c) (campaignTarget c))
-    (slotRangeT (collectionRange c))
+-- | An event trigger that fires when a Curation Stake is Forfeited
+forfeitTrigger :: Campaign -> EventTrigger
+forfeitTrigger c = andT
+    (fundsAtAddressGeqT (intelBountyAddress c) (curationVoteTarget c))
+    (slotRangeT (curationStakeForfeitRange c))
+
 
 -- | Claim a refund of our campaign contribution
-refundHandler :: MonadWallet m => TxId -> Campaign -> EventHandler m
-refundHandler txid cmp = EventHandler (\_ -> do
-    logMsg "Claiming refund"
-    let validatorScript = contributionScript cmp
+rewardHandler :: MonadWallet m => TxId -> Campaign -> EventHandler m
+rewardHandler txid cmp = EventHandler (\_ -> do
+    logMsg "Claiming reward"
+    let validatorScript = curationVoteScript cmp
         redeemerScript  = Ledger.RedeemerScript (Ledger.lifted Refund)
 
     -- `collectFromScriptTxn` generates a transaction that spends the unspent
@@ -196,10 +194,10 @@ refundHandler txid cmp = EventHandler (\_ -> do
     -- here to ensure that we don't attempt to claim back other contributors'
     -- funds (if we did that, the validator script would fail and the entire
     -- transaction would be invalid).
-    collectFromScriptTxn (refundRange cmp) validatorScript redeemerScript txid)
+    collectFromScriptTxn (refundRange cmp) validatorScript redeemerScript txid)   
 
-$(mkFunctions ['scheduleCollection, 'contribute])
-$(mkIotsDefinitions ['scheduleCollection, 'contribute])
+$(mkFunctions ['scheduleForfeit, 'forfeit])
+$(mkIotsDefinitions ['scheduleForfeit, 'forfeit])
 
 {- note [Transactions in the crowdfunding campaign]
 
@@ -250,6 +248,7 @@ to change.
 
 -}
 
+--How Does this interact with the rest of the code?  Through the imports? Any problem with deleting?
 myCurrency :: KnownCurrency
 myCurrency = KnownCurrency "b0b0" "MyCurrency" ( "USDToken" :| ["EURToken"])
 $(mkKnownCurrencies ['myCurrency])
