@@ -1,4 +1,5 @@
-{-Need to make the Curation Stake Forfeits go to the Winning Curators.
+{-Maybe just have a dollar threshhold that declares the winner.  
+--Need to make the Curation Stake forfeits go to the Winning Curators.
 --How do we compare votes for two different Intell Providers.  Maybe the Curation Stake isn't the vote, maybe the vote happens
 in the DataScript.
 --This was modified from the Crowdfunding Contract on Plutus Playground.
@@ -7,7 +8,9 @@ Intell Bounty out to the Intell Provider and the winning Curaters.  Maybe that m
 and it just has different collection and refund destinations and triggers.
 --Eventually would need to shadow this voting module for Blacklist Voting.
 --Maybe need to somehow make the old campaign target dynamically equal to the contribution (i.e. vote) value for whatever
-Intell provider receives the most votes. -}
+Intell provider receives the most votes. 
+
+-}
 
 
 import qualified Language.PlutusTx         as PlutusTx
@@ -125,7 +128,7 @@ curationVoteScript cmp  = ValidatorScript $
 
 -- | The address of the [[Intel Bounty]]
 intelBountyAddress :: CurationVote -> Ledger.Address
-inteLBountyAddress = Ledger.scriptAddress . curationVoteScript
+intelBountyAddress = Ledger.scriptAddress . curationVoteScript
  
 -- | Contribute Votes (i.e. either funds or datascriptvote along with funds) to the Intel Bounty Address.
 
@@ -196,8 +199,8 @@ rewardHandler txid cmp = EventHandler (\_ -> do
     -- transaction would be invalid).
     collectFromScriptTxn (refundRange cmp) validatorScript redeemerScript txid)   
 
-$(mkFunctions ['scheduleForfeit, 'forfeit])
-$(mkIotsDefinitions ['scheduleForfeit, 'forfeit])
+$(mkFunctions ['scheduleForfeit, 'curate])
+$(mkIotsDefinitions ['scheduleForfeit, 'curate])
 
 {- note [Transactions in the crowdfunding campaign]
 
