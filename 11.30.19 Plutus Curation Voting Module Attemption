@@ -36,7 +36,7 @@ data CurationVote = CurationVote
     -- ^ Target amount of Curatin Votes for the Intell Provider to be declared a winner
     , curationStakeForfeitDeadline :: Slot
     -- ^ The date by which the Winning Intell Provider has to collect the funds
-    , intellProviderAddress              :: PubKey
+    , intelProviderAddress              :: PubKey
     -- ^ Public key of the intellProvider. This key is entitled to retrieve the
     --   funds if that intellProvider is the winner.
     } deriving (Generic, ToJSON, FromJSON, ToSchema)
@@ -50,11 +50,11 @@ mkCurationVote ddl target curationVoteDdl ownerWallet =
     CurationVote
         { curationVoteDeadline = ddl
         , curationVoteTarget   = target
-        , curationVoteForfeitDeadline = collectionDdl
-        , intellProvider = EM.walletPubKey ownerWallet
+        , curationStakeForfeitDeadline = collectionDdl
+        , intelProviderAddress = EM.walletPubKey ownerWallet
         }
     
-- | The 'SlotRange' during which the votes can be collected
+-- | The 'SlotRange' during which the votes can be collected
 curationStakeForfeitRange :: CurationVote -> SlotRange
 curationStakeForfeitRange cmp =
     W.interval (curationVoteDeadline cmp) (curationVoteForfeitDeadline cmp)
@@ -67,7 +67,7 @@ curationRewardRange cmp =
 data CurationVoteAction = Forfeit | Reward
     deriving (Generic, ToJSON, FromJSON, ToSchema)
 
-PlutusTx.makeLift ''curationVoteAction
+PlutusTx.makeLift ''CurationVoteAction
 
 -- | The validator script is a function of three arguments:
 -- 1. A 'PubKey'. This is the data script. It is provided by the producing
@@ -125,11 +125,11 @@ curationVoteScript cmp  = ValidatorScript $
 
 -- | The address of the [[Intel Bounty]]
 intelBountyAddress :: CurationVote -> Ledger.Address
-inteLBountyAddress = Ledger.scriptAddress . contributionScript 
+inteLBountyAddress = Ledger.scriptAddress . curationVoteScript
  
 -- | Contribute Votes (i.e. either funds or datascriptvote along with funds) to the Intel Bounty Address.
 
-Curate :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> Value -> m ()
+curate :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> Value -> m ()
 curate deadline target curationVoteDeadline ownerWallet value = do
     let cmp = mkCurationVote deadline target CurationVoteDeadline ownerWallet
     ownPK <- ownPubKey
@@ -169,20 +169,20 @@ scheduleForfeit deadline target curationStakeForfeitDeadline ownerWallet = do
         collectFromScript range (contributionScript cmp) redeemerScript))
 
 -- | An event trigger that fires when a rewardcan be claimed
-rewardTrigger :: Value -> Campaign -> EventTrigger
+rewardTrigger :: Value -> CurationVote -> EventTrigger
 rewardTrigger vl c = andT
     (fundsAtAddressGeqT (intelBountyAddress c) vl)
     (slotRangeT (curationStakeForfeitRange c))
 
 -- | An event trigger that fires when a Curation Stake is Forfeited
-forfeitTrigger :: Campaign -> EventTrigger
+forfeitTrigger :: CurationVote -> EventTrigger
 forfeitTrigger c = andT
     (fundsAtAddressGeqT (intelBountyAddress c) (curationVoteTarget c))
     (slotRangeT (curationStakeForfeitRange c))
 
 
 -- | Claim a refund of our campaign contribution
-rewardHandler :: MonadWallet m => TxId -> Campaign -> EventHandler m
+rewardHandler :: MonadWallet m => TxId -> CurationVote -> EventHandler m
 rewardHandler txid cmp = EventHandler (\_ -> do
     logMsg "Claiming reward"
     let validatorScript = curationVoteScript cmp
