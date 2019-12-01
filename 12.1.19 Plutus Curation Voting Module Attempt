@@ -1,4 +1,5 @@
 {- DOOOOOOOOOOOOOOOOOO   Thiiiiiiiiis:  Make scheduleForfeit happen only if the target is NOT met.
+--There are a bunch of ways to compare two or more values here:  https://github.com/input-output-hk/plutus/blob/master/plutus-tx/src/Language/PlutusTx/Ord.hs
 --How do we compare votes for two different Intell Providers.  Maybe the Curation Stake isn't the vote, maybe the vote happens
 in the DataScript.
 --This was modified from the Crowdfunding Contract on Plutus Playground.
