@@ -132,8 +132,8 @@ intelBountyAddress = Ledger.scriptAddress . curationVoteScript
 -- | Contribute Votes (i.e. either funds or datascriptvote along with funds) to the Intel Bounty Address.
 
 curate :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> Value -> m ()
-curate deadline target curationVoteDeadline ownerWallet value = do
-    let cmp = mkCurationVote deadline target curationVoteDeadline ownerWallet
+curate deadline target curationStakeForfeitDeadline ownerWallet value = do
+    let cmp = mkCurationVote deadline target curationStakeForfeitDeadline ownerWallet
     ownPK <- ownPubKey
     let ds = DataScript (Ledger.lifted ownPK)
         range = W.interval 1 (curationVoteDeadline cmp)
