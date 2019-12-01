@@ -1,4 +1,4 @@
-{-Need to make the Curation Stake forfeits go to the Winning Curators.
+{-Make scheduleForfeit happen only if the target is NOT met.
 --How do we compare votes for two different Intell Providers.  Maybe the Curation Stake isn't the vote, maybe the vote happens
 in the DataScript.
 --This was modified from the Crowdfunding Contract on Plutus Playground.
@@ -7,7 +7,7 @@ Intell Bounty out to the Intell Provider and the winning Curaters.  Maybe that m
 and it just has different collection and refund destinations and triggers.
 --Eventually would need to shadow this voting module for Blacklist Voting.
 --Maybe need to somehow make the old campaign target dynamically equal to the contribution (i.e. vote) value for whatever
-Intell provider receives the most votes. 
+Intell provider receives the most votes. \
 
 -}
 
