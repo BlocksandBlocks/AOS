@@ -86,19 +86,19 @@ type CurationVoteValidator = PubKey -> CurationVoteAction -> PendingTx -> Bool
 validCurationReward :: CurationVote -> PubKey -> PendingTx -> Bool
 validCurationReward curationVote contributor ptx =
     -- Check that the transaction falls in the curation reward range of the campaign
-    Interval.contains (curationRewardRange CurationVote) (pendingTxValidRange ptx)
+    Interval.contains (curationRewardRange curationVote) (pendingTxValidRange ptx)
     -- Check that the transaction is signed by the Intell Curator
     && (ptx `V.txSignedBy` contributor)
 
 validCurationStakeForfeit :: CurationVote -> PendingTx -> Bool
 validCurationStakeForfeit curationVote p =
     -- Check that the transaction falls in the curation vote forfeit range of the campaign
-    (curationStakeForfeitRange CurationVote `Interval.contains` pendingTxValidRange p)
+    (curationStakeForfeitRange curationVote `Interval.contains` pendingTxValidRange p)
     -- Check that the transaction is trying to spend more money than the campaign
     -- target (and hence the target was reached)
-    && (valueSpent p `Value.geq` curationVoteTarget CurationVote)
+    && (valueSpent p `Value.geq` curationVoteTarget curationVote)
     -- Check that the transaction is signed by the IntellProvider
-    && (p `V.txSignedBy` intelProviderAddress CurationVote)
+    && (p `V.txSignedBy` intelProviderAddress curationVote)
 
 
 -- | The validator script is of type 'CrowdfundingValidator', and is
