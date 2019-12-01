@@ -1,5 +1,4 @@
-{-Maybe just have a dollar threshhold that declares the winner.  
---Need to make the Curation Stake forfeits go to the Winning Curators.
+{-Need to make the Curation Stake forfeits go to the Winning Curators.
 --How do we compare votes for two different Intell Providers.  Maybe the Curation Stake isn't the vote, maybe the vote happens
 in the DataScript.
 --This was modified from the Crowdfunding Contract on Plutus Playground.
@@ -60,12 +59,12 @@ mkCurationVote ddl target curationVoteDdl ownerWallet =
 -- | The 'SlotRange' during which the votes can be collected
 curationStakeForfeitRange :: CurationVote -> SlotRange
 curationStakeForfeitRange cmp =
-    W.interval (curationVoteDeadline cmp) (curationVoteForfeitDeadline cmp)
+    W.interval (curationVoteDeadline cmp) (curationstakeForfeitDeadline cmp)
     
 -- | The 'SlotRange' during which a curationReward may be claimed
 curationRewardRange :: CurationVote -> SlotRange
 curationRewardRange cmp =
-    W.intervalFrom (curationVoteRewardDeadline cmp)  
+    W.intervalFrom (curationVoteDeadline cmp)  
     
 data CurationVoteAction = Forfeit | Reward
     deriving (Generic, ToJSON, FromJSON, ToSchema)
@@ -87,19 +86,19 @@ type CurationVoteValidator = PubKey -> CurationVoteAction -> PendingTx -> Bool
 validCurationReward :: CurationVote -> PubKey -> PendingTx -> Bool
 validCurationReward curationVote contributor ptx =
     -- Check that the transaction falls in the curation reward range of the campaign
-    Interval.contains (curationRewardRange campaign) (pendingTxValidRange ptx)
+    Interval.contains (curationRewardRange CurationVote) (pendingTxValidRange ptx)
     -- Check that the transaction is signed by the Intell Curator
     && (ptx `V.txSignedBy` contributor)
 
 validCurationStakeForfeit :: CurationVote -> PendingTx -> Bool
 validCurationStakeForfeit curationVote p =
     -- Check that the transaction falls in the curation vote forfeit range of the campaign
-    (curationVoteForfeitRange curationVote `Interval.contains` pendingTxValidRange p)
+    (curationVoteForfeitRange CurationVote `Interval.contains` pendingTxValidRange p)
     -- Check that the transaction is trying to spend more money than the campaign
     -- target (and hence the target was reached)
-    && (valueSpent p `Value.geq` curationVoteTarget campaign)
+    && (valueSpent p `Value.geq` curationVoteTarget CurationVote)
     -- Check that the transaction is signed by the IntellProvider
-    && (p `V.txSignedBy` IntellProvider curationVote)
+    && (p `V.txSignedBy` IntellProvider CurationVote)
 
 
 -- | The validator script is of type 'CrowdfundingValidator', and is
@@ -134,7 +133,7 @@ intelBountyAddress = Ledger.scriptAddress . curationVoteScript
 
 curate :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> Value -> m ()
 curate deadline target curationVoteDeadline ownerWallet value = do
-    let cmp = mkCurationVote deadline target CurationVoteDeadline ownerWallet
+    let cmp = mkCurationVote deadline target curationVoteDeadline ownerWallet
     ownPK <- ownPubKey
     let ds = DataScript (Ledger.lifted ownPK)
         range = W.interval 1 (curationVoteDeadline cmp)
@@ -164,12 +163,12 @@ curate deadline target curationVoteDeadline ownerWallet value = do
 --
 scheduleForfeit :: MonadWallet m => Slot -> Value -> Slot -> Wallet -> m ()
 scheduleForfeit deadline target curationStakeForfeitDeadline ownerWallet = do
-    let cmp = mkCampaign deadline target curationStakeForfeitDeadline ownerWallet
+    let cmp = mkCurationVote deadline target curationStakeForfeitDeadline ownerWallet
     register (forfeitTrigger cmp) (EventHandler (\_ -> do
         logMsg "Forfeiting Curation Stake"
         let redeemerScript = Ledger.RedeemerScript (Ledger.lifted Collect)
             range = curationStakeForfeitRange cmp
-        collectFromScript range (contributionScript cmp) redeemerScript))
+        collectFromScript range (curationVoteScript cmp) redeemerScript))
 
 -- | An event trigger that fires when a rewardcan be claimed
 rewardTrigger :: Value -> CurationVote -> EventTrigger
@@ -189,7 +188,7 @@ rewardHandler :: MonadWallet m => TxId -> CurationVote -> EventHandler m
 rewardHandler txid cmp = EventHandler (\_ -> do
     logMsg "Claiming reward"
     let validatorScript = curationVoteScript cmp
-        redeemerScript  = Ledger.RedeemerScript (Ledger.lifted Refund)
+        redeemerScript  = Ledger.RedeemerScript (Ledger.lifted Reward)
 
     -- `collectFromScriptTxn` generates a transaction that spends the unspent
     -- transaction outputs at the address of the validator scripts, *but* only
@@ -197,7 +196,7 @@ rewardHandler txid cmp = EventHandler (\_ -> do
     -- here to ensure that we don't attempt to claim back other contributors'
     -- funds (if we did that, the validator script would fail and the entire
     -- transaction would be invalid).
-    collectFromScriptTxn (refundRange cmp) validatorScript redeemerScript txid)   
+    collectFromScriptTxn (rewardRange cmp) validatorScript redeemerScript txid)   
 
 $(mkFunctions ['scheduleForfeit, 'curate])
 $(mkIotsDefinitions ['scheduleForfeit, 'curate])
