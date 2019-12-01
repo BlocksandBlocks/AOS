@@ -35,7 +35,7 @@ data CurationVote = CurationVote
     { curationVoteDeadline           :: Slot
     -- ^ The date by which the Curation Vote target has to be met
     , curationVoteTarget             :: Value
-    -- ^ Target amount of Curatin Votes for the Intell Provider to be declared a winner
+    -- ^ Target amount of Curation Votes for the Intel Provider to be declared a winner
     , curationStakeForfeitDeadline :: Slot
     -- ^ The date by which the Winning Intell Provider has to collect the funds
     , intelProviderAddress              :: PubKey
