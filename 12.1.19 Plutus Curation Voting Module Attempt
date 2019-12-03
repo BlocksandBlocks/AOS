@@ -90,6 +90,8 @@ validCurationReward curationVote curator ptx =
     Interval.contains (curationRewardRange curationVote) (pendingTxValidRange ptx)
     -- Check that the transaction is signed by the Intel Curator
     && (ptx `V.txSignedBy` curator)
+    
+-- Ledger.Value import can be found at https://github.com/input-output-hk/plutus/blob/ae37a83e459743ccd948b0500b4e39ae02250a63/wallet-api/src/Ledger/Value/TH.hs
 
 validCurationStakeForfeit :: CurationVote -> PendingTx -> Bool
 validCurationStakeForfeit curationVote p =
