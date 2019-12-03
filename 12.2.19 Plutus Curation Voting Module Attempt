@@ -1,4 +1,5 @@
-{- There are a bunch of ways to compare two or more values here:  https://github.com/input-output-hk/plutus/blob/master/plutus-tx/src/Language/PlutusTx/Ord.hs
+{- Figure out how to add in Intell Bounty and Blacklist voting (separate contracts or here?)
+--There are a bunch of ways to compare two or more values here:  https://github.com/input-output-hk/plutus/blob/master/plutus-tx/src/Language/PlutusTx/Ord.hs
 --How do we compare votes for two different Intell Providers.  Maybe the Curation Stake isn't the vote, maybe the vote happens
 in the DataScript.
 --This was modified from the Crowdfunding Contract on Plutus Playground.
@@ -254,6 +255,6 @@ This part of the API (the PendingTx argument) is experimental and subject
 to change.
 
 -}
- 
+
 
     
