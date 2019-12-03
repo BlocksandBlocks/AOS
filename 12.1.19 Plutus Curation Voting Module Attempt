@@ -99,7 +99,7 @@ validCurationStakeForfeit curationVote p =
     (curationStakeForfeitRange curationVote `Interval.contains` pendingTxValidRange p)
     -- Check that the transaction is trying to spend more money than the campaign
     -- target (and hence the target was reached)
-    && (valueSpent p `Value.geq` curationVoteTarget curationVote)
+    && (valueSpent p `Value.leq` curationVoteTarget curationVote)
     -- Check that the transaction is signed by the IntellProvider
     && (p `V.txSignedBy` intelProviderAddress curationVote)
 
