@@ -91,7 +91,7 @@ validCurationReward :: CurationVote -> PubKey -> PendingTx -> Bool
 validCurationReward curationVote curator ptx =
     -- Check that the transaction falls in the curation reward range of the campaign
     Interval.contains (curationRewardRange curationVote) (pendingTxValidRange ptx)
-    --Check that the transaction is trying to spend more money than the campaing
+    --Check that the transaction is trying to spend more money than the curation
     --target (and hence the target was reached)
      && (valueSpent ptx `Value.geq` curationVoteTarget curationVote)
     -- Check that the transaction is signed by the Intel Curator
