@@ -47,10 +47,10 @@ CommitCash (IdentCC 1) 1
                                                                                            200 Null))))
                                                                      (RedeemCC (IdentCC 1)
                                                                                (Pay (IdentPay 4) 3 1
-                                                                                    (ConstMoney 1)
+                                                                                    (AvailableMoney (IdentCC 2))
                                                                                     200
                                                                                     (Pay (IdentPay 5) 4 1
-                                                                                         (ConstMoney 1)
+                                                                                         (AvailableMoney (IdentCC 3))
                                                                                          200 Null))))
                                                              Null)
                                                        (RedeemCC (IdentCC 1) Null))
