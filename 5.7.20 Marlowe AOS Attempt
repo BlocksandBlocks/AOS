@@ -19,7 +19,9 @@
 --5.7.20 Updates
 --I'm going to try to use the greater than or equal block and the "AndObs" block to nest some AND functions and create voting by number.
 --Okay, I think the solution in line 20 above solved the problem in lines 15-16.  
---However, creates new problem:  Pay 4 and 5 (Curation Stake Forfeits) now go back to bounty maker even if they both voted against the insufficient Intel.
+--However, creates new problems--  
+--Problem 1: Check to see if the "ConstMoney" value in the ValueGE function actually works as a zero and that the value of the choices are working correctly as values.
+--Problem 2: Pay 4 and 5 (Curation Stake Forfeits) now go back to bounty maker even if they both voted against the insufficient Intel.
 --We need the Curation stake of the losing curator (if any) to go to the winning Curators.
 
 
