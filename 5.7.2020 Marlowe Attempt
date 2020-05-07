@@ -16,6 +16,8 @@
 --Wait, that problem in the line above is screwed up.  Gotta fix that.
 --This would be a fixed fee version of the contract. Every Bounty is 100 ADA.  Every Curation Stake is 1 ADA.  Every Curation Bounty is 10 ADA.
 
+--5.7.20 Updates
+--I'm going to try to use the greater than or equal block and the "AndObs" block to nest some AND functions and create voting by number.
 
 
 
