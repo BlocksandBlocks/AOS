@@ -50,8 +50,10 @@ CommitCash (IdentCC 1) 1
                                                                        100
                                                                        (Choice (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
                                                                                                                    (ConstMoney 0))
-                                                                                                  (MoneyFromChoice (IdentChoice 3) 4
-                                                                                                                   (ConstMoney 0)))
+                                                                                                  (AddMoney (MoneyFromChoice (IdentChoice 3) 4
+                                                                                                                             (ConstMoney 0))
+                                                                                                            (MoneyFromChoice (IdentChoice 4) 5
+                                                                                                                             (ConstMoney 0))))
                                                                                         (ConstMoney 1))
                                                                                (Pay (IdentPay 1) 1 2
                                                                                     (ConstMoney 90)
