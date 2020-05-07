@@ -1,5 +1,67 @@
-
-
+--This is going to be an attempt at a sequential version of the AOS "Voting" (now it would be "Approval") module in Marlowe.
+--Each Intel Source would provide their Intel and either be approved or not approved, then the next Intel Source could try.
+--This would be a simple & primitive version until we figure out how to do the consensus by voting.
+--Person 1 would be the Bounty Maker; Person 2 is the Intel Source. 
+--CommitCash 1 is the Bounty.
+--Choice 1 where Person 2 Chooses Something is the Proposed Intel (the "something" that is chosen").
+--CommitCash 2 and 3 are Curation Stakes from the Curators (i.e. Persons 3 & 4).  
+--Just add more of these CommitCash blocks for more curators.
+--Choice 2 is the first Curator (Person 3) voting yes or no on the Proposed Intel.
+--Choice 3 is the second Curator (Person 4) voting yes or no on the Proposed Intel.
+--If both (i.e. all) Curators vote yes then Pay 1 is carried out to pay 90% of the bounty to the Intel Source (Person 2).
+--That would in turn spark Pay 2 and Pay 3, which would be payments to each curator of their share of the Curation Bounty.
+--The Curation Bounty is 10% of the Intel Bounty so they each get 5% in this case.
+--Right above Pay 2 and Pay 3 are the redemptions of the curation stakes.
+--Pay 4 and Pay 5 would be the Curators (Persons 3 & 4) forfeiting their Curation Stakes to the Bounty Maker if either doesn't vote yes.
+--Wait, that problem in the line above is screwed up.  Gotta fix that.
+--This would be a fixed fee version of the contract. Every Bounty is 100 ADA.  Every Curation Stake is 1 ADA.  Every Curation Bounty is 10 ADA.
 
 --5.7.20 Updates
 --I'm going to try to use the greater than or equal block and the "AndObs" block to nest some AND functions and create voting by number.
+
+
+
+
+
+CommitCash (IdentCC 1) 1
+           (ConstMoney 100)
+           10 100
+           (When (PersonChoseSomething (IdentChoice 1) 2)
+                 100
+                 (CommitCash (IdentCC 2) 3
+                             (ConstMoney 1)
+                             20 100
+                             (When (PersonChoseSomething (IdentChoice 2) 3)
+                                   100
+                                   (Choice (PersonChoseThis (IdentChoice 2) 3 1)
+                                           (CommitCash (IdentCC 3) 3
+                                                       (ConstMoney 1)
+                                                       20 100
+                                                       (When (PersonChoseSomething (IdentChoice 3) 4)
+                                                             100
+                                                             (Choice (PersonChoseThis (IdentChoice 3) 4 1)
+                                                                     (Pay (IdentPay 1) 1 2
+                                                                          (ConstMoney 90)
+                                                                          200
+                                                                          (Both (Both (RedeemCC (IdentCC 2) Null)
+                                                                                      (RedeemCC (IdentCC 3) Null))
+                                                                                (Both (Pay (IdentPay 2) 1 3
+                                                                                           (ConstMoney 5)
+                                                                                           200 Null)
+                                                                                      (Pay (IdentPay 3) 1 4
+                                                                                           (ConstMoney 5)
+                                                                                           200 Null))))
+                                                                     (RedeemCC (IdentCC 1)
+                                                                               (Pay (IdentPay 4) 3 1
+                                                                                    (AvailableMoney (IdentCC 2))
+                                                                                    200
+                                                                                    (Pay (IdentPay 5) 4 1
+                                                                                         (AvailableMoney (IdentCC 3))
+                                                                                         200 Null))))
+                                                             Null)
+                                                       (RedeemCC (IdentCC 1) Null))
+                                           (RedeemCC (IdentCC 2) Null))
+                                   Null)
+                             (RedeemCC (IdentCC 1) Null))
+                 (RedeemCC (IdentCC 1) Null))
+           Null
