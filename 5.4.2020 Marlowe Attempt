@@ -1,7 +1,7 @@
 --This is going to be an attempt at a sequential version of the AOS "Voting" (now it would be "Approval") module in Marlowe.
 --Each Intel Source would provide their Intel and either be approved or not approved, then the next Intel Source could try.
 --This would be a simple & primitive version until we figure out how to do the consensus by voting.
---Person 1 would be the Bounty Maker; Person 2 is the Intel Source; 
+--Person 1 would be the Bounty Maker; Person 2 is the Intel Source. 
 --CommitCash 1 is the Bounty.
 --Choice 1 where Person 2 Chooses Something is the Proposed Intel (the "something" that is chosen").
 --CommitCash 2 and 3 are Curation Stakes from the Curators (i.e. Persons 3 & 4).  
