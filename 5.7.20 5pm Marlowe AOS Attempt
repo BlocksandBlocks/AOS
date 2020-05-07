@@ -43,7 +43,7 @@ CommitCash (IdentCC 1) 1
                                                20 100
                                                (When (PersonChoseSomething (IdentChoice 3) 4)
                                                      100
-                                                     (CommitCash (IdentCC 3) 5
+                                                     (CommitCash (IdentCC 4) 5
                                                                  (ConstMoney 1)
                                                                  20 100
                                                                  (When (PersonChoseSomething (IdentChoice 4) 5)
@@ -58,15 +58,18 @@ CommitCash (IdentCC 1) 1
                                                                                (Pay (IdentPay 1) 1 2
                                                                                     (ConstMoney 90)
                                                                                     200
-                                                                                    (Both (Pay (IdentPay 2) 1 3
-                                                                                               (ConstMoney 5)
-                                                                                               200 Null)
-                                                                                          (Both (Pay (IdentPay 3) 1 4
+                                                                                    (Both (Both (RedeemCC (IdentCC 2) Null)
+                                                                                                (Both (RedeemCC (IdentCC 3) Null)
+                                                                                                      (RedeemCC (IdentCC 4) Null)))
+                                                                                          (Both (Pay (IdentPay 2) 1 3
                                                                                                      (ConstMoney 4)
                                                                                                      200 Null)
-                                                                                                (Pay (IdentPay 4) 1 5
-                                                                                                     (ConstMoney 4)
-                                                                                                     200 Null))))
+                                                                                                (Both (Pay (IdentPay 3) 1 4
+                                                                                                           (ConstMoney 3)
+                                                                                                           200 Null)
+                                                                                                      (Pay (IdentPay 4) 1 5
+                                                                                                           (ConstMoney 3)
+                                                                                                           200 Null)))))
                                                                                (RedeemCC (IdentCC 1)
                                                                                          (Both (Choice (AndObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
                                                                                                                                                    (ConstMoney 0))
