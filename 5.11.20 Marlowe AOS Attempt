@@ -24,6 +24,13 @@
 --I think I fixed Problem 2 above in lines 24-25 with the duplication of the ValueGE blocks into the "otherwise contingency.
 --The Curation Stake of the losing Curators will go back to the Bounty Maker.
 
+--5.11.20 Updates
+--Previously, the Curators only forfeited their Curation stake if they voted No and the other two voted yes.
+--Now I have an "or" clause where if the other two voted such that their cumalative vote was "Not" greater than or equal to 1 (i.e. one of them voted "no" i.e. "-1"),
+--and the particular curator voted "yes" (i.e. "1") then they also forfeit the curation stake.
+--Problem 3: Does this create an incentive to always vote yes since the curators only get paid if it's a yes?
+--Idea: Should I create another choice for Bounty maker to put a proposed intel before curation or to just accept it without curation?
+
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
