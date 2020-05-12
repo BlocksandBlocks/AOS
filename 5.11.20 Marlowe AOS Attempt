@@ -21,7 +21,7 @@
 --Problem 1: Check to see if the "ConstMoney" value in the ValueGE function actually works as a zero and that the value of the choices are working correctly as values.
 --Problem 2: Pay 4 and 5 (Curation Stake Forfeits) now go back to bounty maker even if they both voted against the insufficient Intel.
 --We need the Curation stake of the losing curator (if any) to go to the winning Curators or the Bounty Maker.
---I think I fixed Problem 2 above in lines 24-25 with the duplication of the ValueGE blocks into the "otherwise contingency.
+--I think I fixed Problem 2 above in lines 24-25 with the duplication of the ValueGE blocks into the "otherwise" contingency.
 --The Curation Stake of the losing Curators will go back to the Bounty Maker.
 
 --5.11.20 Updates
@@ -29,7 +29,29 @@
 --Now I have an "or" clause where if the other two voted such that their cumalative vote was "Not" greater than or equal to 1 (i.e. one of them voted "no" i.e. "-1"),
 --and the particular curator voted "yes" (i.e. "1") then they also forfeit the curation stake.
 --Problem 3: Does this create an incentive to always vote yes since the curators only get paid if it's a yes?
---Idea: Should I create another choice for Bounty maker to put a proposed intel before curation or to just accept it without curation?
+--Problem 4:  Strawman voter problem.
+--Possible Solution to Problem 4:  Maybe require that the cumulative Curation Stake be equal to large portion of the Bounty.  
+--Maybe start with a Bounty of 5 ADA and require 5 curators each putting up a curation stake of 1 ADA (for a total of 5 ADA).
+--Then you would need at least one other person to vote against you to make money with strawmen.
+--If two people voted against you, you would be risking 3 to make 2.
+--Alternate Solution to Problem 4: Maybe Problem 4 is mitigated because the strawman manipulator also has to deal with sequence problems.  
+--For instance, the contract only moves forward if 5 curators vote.  
+--If he votes all three strawmen "yes" as the first three votes, then the next two people could vote "yes" or "no".
+--If they vote yes, then they get part of his Bounty as a curation reward and he loses money.   
+--If they vote no he only gets 2 ada as their forfeiture.
+--The same applies if he uses 4 strawmen:  the fifth curator could vote yes (he loses money) or no (he risked 4 to make 1).
+--But, all that only applies if it's the Bounty Maker doing a strawman curator exploit.
+--What's if it's a strawman curator exploit where the exploiter is only a curator and not a Bounty Maker.
+--That's where we need the curation stake to not be capped at a certain number that's predictable to the strawman curator. 
+--Maybe the Bounty maker randomly decides the required # of curators at the start but that number is hidden!
+--Then, any particular number of strawman curation votes might not be enough...the exploiter won't know and each vote costs them.
+--Unless the exploiter uses an overwhelming # of strawmen.  That's mitigated by the curation stake equaling the bounty.
+--There, the more of the total curation stake you have the less you make with 100% of stake = no profits.
+--So maybe you employ the sequential voting mitigation concept plus total curation stake = bounty.
+--Maybe you always have 5 curators at the start and set each curators curation stake at curation stake= bounty/5.
+--Now how do you solve Problem 3:  "Always Vote Yes Exploit".
+--Action Item & Solution to Problem 3:  The Intel Source must commit cash that goes to curators in a "no" vote.
+--Idea: Should I create another choice for Bounty Maker to put a Proposed Piece of Intel into curation or to just accept it without curation?
 
 
 
