@@ -51,6 +51,7 @@
 --Maybe you always have 5 curators at the start and set each curators curation stake at curation stake= bounty/5.
 --Now how do you solve Problem 3:  "Always Vote Yes Exploit".
 --Action Item & Solution to Problem 3:  The Intel Source must commit cash that goes to curators in a "no" vote.
+--Maybe that amount is the same as the required individual curation stake (i.e. bounty/5 to start).
 --Idea: Should I create another choice for Bounty Maker to put a Proposed Piece of Intel into curation or to just accept it without curation?
 
 
