@@ -75,6 +75,12 @@
 --That's good for discouraging it since strawman is staking many times honest voters only staking once.  
 --This would actually weigh in favor of allowing only a small stake per vote and counting actual votes.
 
+5.17.20
+--There's actually a problem here in the code as of 5.13 (not the uncoded plan with the windows...the actual code).
+--You only get punished for a bad vote if it doesn't pass.  
+--You could vote "no" while the other two vote "yes", it passes and no punishment.
+--So, we need the module from the no pass scenario (where the minority vote is punished to be in the pass scenario).
+
 When (PersonChoseSomething (IdentChoice 99) 1)
      9
      (CommitCash (IdentCC 1) 1
@@ -110,15 +116,72 @@ When (PersonChoseSomething (IdentChoice 99) 1)
                                                                                           (Both (Both (RedeemCC (IdentCC 2) Null)
                                                                                                       (Both (RedeemCC (IdentCC 3) Null)
                                                                                                             (RedeemCC (IdentCC 4) Null)))
-                                                                                                (Both (Pay (IdentPay 2) 1 3
-                                                                                                           (ConstMoney 4)
-                                                                                                           200 Null)
-                                                                                                      (Both (Pay (IdentPay 3) 1 4
-                                                                                                                 (ConstMoney 3)
-                                                                                                                 200 Null)
-                                                                                                            (Pay (IdentPay 4) 1 5
-                                                                                                                 (ConstMoney 3)
-                                                                                                                 200 Null)))))
+                                                                                                (Both (Choice (OrObs (AndObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
+                                                                                                                                                                 (ConstMoney 0))
+                                                                                                                                                (AddMoney (MoneyFromChoice (IdentChoice 3) 4
+                                                                                                                                                                           (ConstMoney 0))
+                                                                                                                                                          (MoneyFromChoice (IdentChoice 4) 5
+                                                                                                                                                                           (ConstMoney 0))))
+                                                                                                                                      (ConstMoney 1))
+                                                                                                                             (PersonChoseThis (IdentChoice 2) 3 -1))
+                                                                                                                     (AndObs (NotObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
+                                                                                                                                                                         (ConstMoney 0))
+                                                                                                                                                        (AddMoney (MoneyFromChoice (IdentChoice 3) 4
+                                                                                                                                                                                   (ConstMoney 0))
+                                                                                                                                                                  (MoneyFromChoice (IdentChoice 4) 5
+                                                                                                                                                                                   (ConstMoney 0))))
+                                                                                                                                              (ConstMoney 1)))
+                                                                                                                             (PersonChoseThis (IdentChoice 2) 3 1)))
+                                                                                                              (Pay (IdentPay 8) 3 1
+                                                                                                                   (AvailableMoney (IdentCC 2))
+                                                                                                                   200 Null)
+                                                                                                              (Pay (IdentPay 2) 1 3
+                                                                                                                   (ConstMoney 4)
+                                                                                                                   200 Null))
+                                                                                                      (Both (Choice (OrObs (AndObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
+                                                                                                                                                                       (ConstMoney 0))
+                                                                                                                                                      (AddMoney (MoneyFromChoice (IdentChoice 3) 4
+                                                                                                                                                                                 (ConstMoney 0))
+                                                                                                                                                                (MoneyFromChoice (IdentChoice 4) 5
+                                                                                                                                                                                 (ConstMoney 0))))
+                                                                                                                                            (ConstMoney 1))
+                                                                                                                                   (PersonChoseThis (IdentChoice 2) 3 -1))
+                                                                                                                           (AndObs (NotObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
+                                                                                                                                                                               (ConstMoney 0))
+                                                                                                                                                              (AddMoney (MoneyFromChoice (IdentChoice 3) 4
+                                                                                                                                                                                         (ConstMoney 0))
+                                                                                                                                                                        (MoneyFromChoice (IdentChoice 4) 5
+                                                                                                                                                                                         (ConstMoney 0))))
+                                                                                                                                                    (ConstMoney 1)))
+                                                                                                                                   (PersonChoseThis (IdentChoice 2) 3 1)))
+                                                                                                                    (Pay (IdentPay 9) 4 1
+                                                                                                                         (AvailableMoney (IdentCC 3))
+                                                                                                                         200 Null)
+                                                                                                                    (Pay (IdentPay 3) 1 4
+                                                                                                                         (ConstMoney 3)
+                                                                                                                         200 Null))
+                                                                                                            (Choice (OrObs (AndObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
+                                                                                                                                                                       (ConstMoney 0))
+                                                                                                                                                      (AddMoney (MoneyFromChoice (IdentChoice 3) 4
+                                                                                                                                                                                 (ConstMoney 0))
+                                                                                                                                                                (MoneyFromChoice (IdentChoice 4) 5
+                                                                                                                                                                                 (ConstMoney 0))))
+                                                                                                                                            (ConstMoney 1))
+                                                                                                                                   (PersonChoseThis (IdentChoice 4) 5 -1))
+                                                                                                                           (AndObs (NotObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
+                                                                                                                                                                               (ConstMoney 0))
+                                                                                                                                                              (AddMoney (MoneyFromChoice (IdentChoice 3) 4
+                                                                                                                                                                                         (ConstMoney 0))
+                                                                                                                                                                        (MoneyFromChoice (IdentChoice 4) 5
+                                                                                                                                                                                         (ConstMoney 0))))
+                                                                                                                                                    (ConstMoney 1)))
+                                                                                                                                   (PersonChoseThis (IdentChoice 4) 5 1)))
+                                                                                                                    (Pay (IdentPay 10) 5 1
+                                                                                                                         (AvailableMoney (IdentCC 4))
+                                                                                                                         200 Null)
+                                                                                                                    (Pay (IdentPay 4) 1 5
+                                                                                                                         (ConstMoney 3)
+                                                                                                                         200 Null))))))
                                                                                      (RedeemCC (IdentCC 1)
                                                                                                (Both (Choice (OrObs (AndObs (ValueGE (AddMoney (MoneyFromChoice (IdentChoice 2) 3
                                                                                                                                                                 (ConstMoney 0))
