@@ -83,6 +83,8 @@
 --Okay, that problem described in this 5.17.20 section above is now fixed by copying the minority vote punishment module into the intell passes scenario.
 --With that fix, this is a good first step proof of concept. 
 --The next step will be the alternating voting windows to mitigate the strawman curator exploit.
+--For better re-usability of code down the road, I kept the minority vote module the same in both the pass and no-pass scenarios.
+--i.e. That module simultaneously punishes the minority voter whether they voted no in a pass scenario or yes in a no-pass scenario.  
 
 When (PersonChoseSomething (IdentChoice 99) 1)
      9
