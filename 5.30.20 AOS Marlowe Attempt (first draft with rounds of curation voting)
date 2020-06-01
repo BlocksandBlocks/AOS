@@ -98,6 +98,7 @@
 --A (continued):  make it greater than 1 (2 for and 1 against) but less than 3 (3 for and 0 against).
 --A (continued):  If it's less than that it doesn't pass.  If it's greater than that it goes on to another round of voting. 
 --A (continued): If its 1 or 2 it passes with no second round.
+--This answer to question 3 above is currently coded in but I need to code the second round of voting.
 
 
 
