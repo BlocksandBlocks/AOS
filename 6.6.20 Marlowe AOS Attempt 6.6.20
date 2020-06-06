@@ -106,6 +106,19 @@ A: You just create an observation that you only continue if each vote is less th
 --A third round of voting (where they can only vote yes) is coded in.
 --The yes votes will carry it if four more people vote yes in the third round.
 
+6.6.20 Red and Black Spies Review it all Today
+--Okay, we're doing this:
+--Only two rounds of votes. First round is 100 votes, curation vote is enforced for this vote.
+--Second round only happens if the first vote is majority "yes".
+--Second round is uncapped and it's tyranny of the crowd. No curation stake.  Unlimited votes. Can only vote NO.
+--Either they vote to pay the Intell Provide or they don't. Cool thing is the strawmen curator gets no second bite at the apple.
+--So a strawman curator can't vote himself into the money in the second round.
+--More importantly, the answer is always unveiled publicly.
+--Monetization: 3% of all bad curation stakes goes to an AOS controlled address.
+--The other 97% goes to the bounty maker.
+--So need to code in this uncapped second round.  No third round.
+--Need to code in the blacklist vote right after bounty is posted.
+--If anyone votes to blacklist then you have a first round of 100 votes and a second uncapped round.
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
