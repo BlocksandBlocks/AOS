@@ -123,8 +123,14 @@ A: You just create an observation that you only continue if each vote is less th
 6.7.20
 --The two rounds of voting are coded in now.  Third round of voting is deleted.  Currently just 3 votes per round.
 --Need to build out 20 votes first round and 100 votes second round.
---Need to build out blacklist voting right after bounty is made by bounty maker.
---Probably don't need to build out that they can only vote negative in second round since that'll be easier.
+--Blacklist voting is built out right after bounty is made by bounty maker.
+--Blacklist voting stuff has 300 numbers for the choice IDs and the person numbers.
+--Blacklist voting has a curation staked first round and a non-stake second round.
+--A 1 vote means it should go forward and NOT be blacklisted.  A -1 vote means it should be blacklisted.
+--IMPORTANT--For the second round unstaked voting in both curation and blacklisting:
+--need to build out something so that you can only vote opposite but it still proceeds if no votes.
+--ANSWER: Make it a Greater or Equal than block with the addition on the 2nd round greater than the first round.  
+
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
