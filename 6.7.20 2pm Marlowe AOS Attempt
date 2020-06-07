@@ -120,6 +120,12 @@ A: You just create an observation that you only continue if each vote is less th
 --Need to code in the blacklist vote right after bounty is posted.
 --If anyone votes to blacklist then you have a first round of 100 votes and a second uncapped round.
 
+6.7.20
+--The two rounds of voting are coded in now.  Third round of voting is deleted.  Currently just 3 votes per round.
+--Need to build out 20 votes first round and 100 votes second round.
+--Need to build out blacklist voting right after bounty is made by bounty maker.
+--Probably don't need to build out that they can only vote negative in second round since that'll be easier.
+
 
 When (PersonChoseSomething (IdentChoice 99) 1)
      9
