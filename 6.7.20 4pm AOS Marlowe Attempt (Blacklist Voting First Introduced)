@@ -93,7 +93,7 @@
 --First Question: 1) do we really need to go to voting by curation stake or does counting votes (but still requiring stake) work for this?
 --A: If you still have a required curation stake, maybe you can still just count votes.
 --Second question:  2) how do we limit voting in one direction for a certain number of blocks?
-A: You just create an observation that you only continue if each vote is less than or greater than 0.
+--A: You just create an observation that you only continue if each vote is less than or greater than 0.
 --Third question: 3) how do you trigger another round of voting only if vote was over 60% or 70% or whatever?
 --A:  You insert an ANDOBS Block in the Choice if Observation block to include the ValueGE block and a FalseObs Value GE to make a less than!
 --A (continued):  make it greater than 1 (2 for and 1 against) but less than 3 (3 for and 0 against).
