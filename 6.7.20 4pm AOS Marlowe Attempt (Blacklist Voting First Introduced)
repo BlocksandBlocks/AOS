@@ -132,7 +132,7 @@ A: You just create an observation that you only continue if each vote is less th
 --ANSWER: Make it a NOT block then an if 5 people chose something and that something is Greater or Equal than zero in each case.
 --If that is true the blacklist curators get rewarded and...it proceeds to the rest of the contract.
 --If it is not true, then you punish the three blacklist curators.
---This above was a big breakthrough.
+--This above was a big breakthrough. It is now coded in for the 2nd round blacklist vote.
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
