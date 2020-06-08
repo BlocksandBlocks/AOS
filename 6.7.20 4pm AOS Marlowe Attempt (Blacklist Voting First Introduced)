@@ -129,10 +129,10 @@ A: You just create an observation that you only continue if each vote is less th
 --A 1 vote means it should go forward and NOT be blacklisted.  A -1 vote means it should be blacklisted.
 --IMPORTANT--For the second round unstaked voting in both curation and blacklisting:
 --need to build out something so that you can only vote opposite but it still proceeds if no votes.
---ANSWER: Make it a NOT block then a Greater or Equal than block with the addition on the 2nd round greater than the 1st round.
---If that is true...it proceeds.
---Problem:  what if no one in the second round votes against the first round?  How does the contract proceed?
-
+--ANSWER: Make it a NOT block then an if 5 people chose something and that something is Greater or Equal than zero in each case.
+--If that is true the blacklist curators get rewarded and...it proceeds to the rest of the contract.
+--If it is not true, then you punish the three blacklist curators.
+--This above was a big breakthrough.
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
