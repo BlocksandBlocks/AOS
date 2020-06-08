@@ -121,18 +121,18 @@ A: You just create an observation that you only continue if each vote is less th
 --If anyone votes to blacklist then you have a first round of 100 votes and a second uncapped round.
 
 6.7.20
---The two rounds of voting are coded in now.  Third round of voting is deleted.  Currently just 3 votes per round.
---Need to build out 20 votes first round and 100 votes second round.
+--The two rounds of voting are coded in now.  Third round of voting is deleted.  Currently 3 votes per round.
+--Need to build out 20 votes first round and 100 votes second round
 --Blacklist voting is built out right after bounty is made by bounty maker.
 --Blacklist voting stuff has 300 numbers for the choice IDs and the person numbers.
---Blacklist voting has a curation staked first round and a non-stake second round.
+--Blacklist voting has a staked first round and a non-stake second round.
 --A 1 vote means it should go forward and NOT be blacklisted.  A -1 vote means it should be blacklisted.
 --IMPORTANT--For the second round unstaked voting in both curation and blacklisting:
 --need to build out something so that you can only vote opposite but it still proceeds if no votes.
---ANSWER: Make it a NOT block then an if 5 people chose something and that something is Greater or Equal than zero in each case.
+--ANSWER: Make it a NOT block then an if 5 people chose something and that something is Greater or Equal to zero in each case.
 --If that is true the blacklist curators get rewarded and...it proceeds to the rest of the contract.
---If it is not true, then you punish the three blacklist curators.
---This above was a big breakthrough. It is now coded in for the 2nd round blacklist vote.
+--If it is not true (ie 5 people in the 2nd round vote against the first round), then you punish the three blacklist curators.
+--This above was a big breakthrough. It is now coded in for the 2nd round blacklist vote and 2nd round curation vote.
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
