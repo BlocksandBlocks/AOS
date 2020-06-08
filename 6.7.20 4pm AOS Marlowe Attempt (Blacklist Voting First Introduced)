@@ -132,7 +132,7 @@ A: You just create an observation that you only continue if each vote is less th
 --If that is true the blacklist curators get rewarded and...it proceeds to the rest of the contract.
 --If it is not true (ie 5 people in the 2nd round vote against the first round), then you punish the three blacklist curators.
 --This above was a big breakthrough. 
---DONE:  It is now coded in for the 2nd round blacklist vote and 2nd round curation vote.
+--DONE:  This answer above is now coded in for the 2nd round blacklist vote and 2nd round curation vote.
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
