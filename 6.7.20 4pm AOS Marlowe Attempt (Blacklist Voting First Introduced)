@@ -128,7 +128,8 @@
 --A 1 vote means it should go forward and NOT be blacklisted.  A -1 vote means it should be blacklisted.
 --IMPORTANT--For the second round unstaked voting in both curation and blacklisting:
 --need to build out something so that you can only vote opposite but it still proceeds if no votes.
---ANSWER: Make it a NOT block then an if 5 people chose something and that something is Greater or Equal to zero in each case.
+--ANSWER: Make it a NOT block that allows the contract to proceed if:
+--5 people chose something and that something is Greater or Equal to zero in each case.
 --If that is true the blacklist curators get rewarded and...it proceeds to the rest of the contract.
 --If it is not true (ie 5 people in the 2nd round vote against the first round), then you punish the three blacklist curators.
 --This above was a big breakthrough. 
