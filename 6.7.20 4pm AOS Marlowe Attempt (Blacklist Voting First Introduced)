@@ -133,7 +133,8 @@ A: You just create an observation that you only continue if each vote is less th
 --If it is not true (ie 5 people in the 2nd round vote against the first round), then you punish the three blacklist curators.
 --This above was a big breakthrough. 
 --DONE:  This answer above is now coded in for the 2nd round blacklist vote and 2nd round curation vote.
-
+--That pretty much fixes the strawman curator problem for both blacklist voting and curation voting.
+--Next:  figure out how to get some small % (e.g. 1%) of bad curations back to an AOS address for monetization.
 
 When (PersonChoseSomething (IdentChoice 99) 1)
      9
