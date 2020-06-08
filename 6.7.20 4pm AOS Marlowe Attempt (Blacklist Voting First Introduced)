@@ -111,7 +111,7 @@ A: You just create an observation that you only continue if each vote is less th
 --Only two rounds of votes. First round is 100 votes, curation vote is enforced for this vote.
 --Second round only happens if the first vote is majority "yes".
 --Second round is uncapped and it's tyranny of the crowd. No curation stake.  Unlimited votes. Can only vote NO.
---Either they vote to pay the Intell Provide or they don't. Cool thing is the strawmen curator gets no second bite at the apple.
+--Either they vote to pay the Intell Provider or they don't. Cool thing is the strawmen curator gets no second bite at the apple.
 --So a strawman curator can't vote himself into the money in the second round.
 --More importantly, the answer is always unveiled publicly.
 --Monetization: 3% of all bad curation stakes goes to an AOS controlled address.
@@ -121,8 +121,7 @@ A: You just create an observation that you only continue if each vote is less th
 --If anyone votes to blacklist then you have a first round of 100 votes and a second uncapped round.
 
 6.7.20
---The two rounds of voting are coded in now.  Third round of voting is deleted.  Currently 3 votes per round.
---Need to build out 20 votes first round and 100 votes second round
+--The two rounds of voting are coded in now.  Third round of voting is deleted.
 --Blacklist voting is built out right after bounty is made by bounty maker.
 --Blacklist voting stuff has 300 numbers for the choice IDs and the person numbers.
 --Blacklist voting has a staked first round and a non-stake second round.
@@ -132,7 +131,8 @@ A: You just create an observation that you only continue if each vote is less th
 --ANSWER: Make it a NOT block then an if 5 people chose something and that something is Greater or Equal to zero in each case.
 --If that is true the blacklist curators get rewarded and...it proceeds to the rest of the contract.
 --If it is not true (ie 5 people in the 2nd round vote against the first round), then you punish the three blacklist curators.
---This above was a big breakthrough. It is now coded in for the 2nd round blacklist vote and 2nd round curation vote.
+--This above was a big breakthrough. 
+--DONE:  It is now coded in for the 2nd round blacklist vote and 2nd round curation vote.
 
 
 When (PersonChoseSomething (IdentChoice 99) 1)
