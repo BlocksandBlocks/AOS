@@ -16,7 +16,7 @@ The Bounty Maker could therefore send someone in to claim the Intel Bounty, get 
 Answer:
 Instead of an "If" block asking if Curator confirmed winner and then having to do something if Curator says "no", let's use a "When".
 In that case, the contract waits for the Curator to confirm. Hopefully that means we can have multiple iterations of people claiming to be the winner.
-The Curator will only confirm when it's the correct winner.
+The Curator will only confirm when it's the correct winner and we won't ever have to worry about the "no" scenario that would require us looping back up.
 
 
 
