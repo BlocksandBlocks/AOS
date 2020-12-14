@@ -107,7 +107,10 @@ When
                                                                 (Account (Role "Intel Source"))
                                                                 (Token "" "")
                                                                 (MulValue
-                                                                    (Constant 0)
+                                                                    (Scale
+                                                                        (9%10)
+                                                                        (Constant 1)
+                                                                    )
                                                                     (ChoiceValue
                                                                         (ChoiceId
                                                                             "Bounty Amount"
@@ -119,7 +122,10 @@ When
                                                                     (Party (Role "Curator"))
                                                                     (Token "" "")
                                                                     (MulValue
-                                                                        (Constant 0)
+                                                                        (Scale
+                                                                            (1%10)
+                                                                            (Constant 1)
+                                                                        )
                                                                         (ChoiceValue
                                                                             (ChoiceId
                                                                                 "Bounty Amount"
@@ -208,7 +214,7 @@ When
                 )]
             1500 Close 
         )]
-    1000 Close
+    1000 Close 
 
 
 
