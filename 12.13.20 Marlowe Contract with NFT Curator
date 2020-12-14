@@ -1,4 +1,4 @@
-To look at this smart contract in blockly, paste the code below at: https://alpha.marlowe.iohkdev.io/#/simulation
+To look at this contract in blockly, paste the code below at: https://alpha.marlowe.iohkdev.io/#/simulation
 
 Hurdle: 
 Need to figure out how to make sure only the NFT holder can act as curator. 
@@ -11,15 +11,9 @@ The NFT holder would then send everyone to his specific smart contract.
 Hurdle:
 Need to keep random people from jumping into the smart contract in the "Intel Source" role and messing up the contract.
 If a random person did that, the Curator would choose 0 to deny the reward and the money of the Bounty Maker would be refunded.
-The Bounty Maker could therefore send someone in to claim the Intel Bounty, get the Curator to  choose 0, then get their money back after seeing the Intel.
+The Bounty Maker could therefore send someone in to claim the Intel Bounty, get the Curator to choose 0, then get their money back after seeing the Intel.
 
 Answer:
-
-
-
-
-
-
 
 
 
@@ -86,7 +80,7 @@ When
                                                     (ChoiceValue
                                                         (ChoiceId
                                                             "Intel Source Claims Intel Bounty"
-                                                            (Role "Curator")
+                                                            (Role "Intel Source")
                                                         ))
                                                     (Constant 1)
                                                 )
@@ -137,7 +131,7 @@ When
                                                             )
                                                             (Pay
                                                                 (Role "Bounty Maker")
-                                                                (Party (Role "Bounty Maker"))
+                                                                (Account (Role "Bounty Maker"))
                                                                 (Token "" "")
                                                                 (ChoiceValue
                                                                     (ChoiceId
@@ -215,3 +209,9 @@ When
             5000 Close 
         )]
     5000 Close
+
+
+
+
+
+
