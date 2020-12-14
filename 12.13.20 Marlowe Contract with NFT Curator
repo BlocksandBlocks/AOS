@@ -141,7 +141,7 @@ When
                                                                 Close 
                                                             )
                                                         )]
-                                                    5000
+                                                    3500
                                                     (Pay
                                                         (Role "Bounty Maker")
                                                         (Party (Role "Bounty Maker"))
@@ -166,7 +166,7 @@ When
                                                     Close 
                                                 )
                                             )]
-                                        100
+                                        3000
                                         (Pay
                                             (Role "Bounty Maker")
                                             (Party (Role "Bounty Maker"))
@@ -191,7 +191,7 @@ When
                                         Close 
                                     )
                                 )]
-                            5000
+                            2500
                             (Pay
                                 (Role "Bounty Maker")
                                 (Party (Role "Bounty Maker"))
@@ -204,11 +204,11 @@ When
                                 Close 
                             )
                         )]
-                    5000 Close 
+                    2000 Close 
                 )]
-            5000 Close 
+            1500 Close 
         )]
-    5000 Close
+    1000 Close
 
 
 
