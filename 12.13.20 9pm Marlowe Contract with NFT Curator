@@ -14,12 +14,10 @@ If a random person did that, the Curator would choose 0 to deny the reward and t
 The Bounty Maker could therefore send someone in to claim the Intel Bounty, get the Curator to choose 0, then get their money back after seeing the Intel.
 
 Answer:
-The Curator has to tell the sc that the Winning Intel Source has been selected. 
-He could do this right before telling the real Winning Intel Source to go claim the reward at the smart contract.
-Timing would make it hard for false claimants to make the Intel Bounty amount go back to the Bounty Maker.
-They would have to do it after the Curator signaled the sc that a winner was selected but before the real winner claims it.
-All in all, it would just be better if there was a block that was like "pubkey submitted by _______" then have that blank be "Curator".  
-In the alternative, the current code would still work if you can have successive loops of "Intel Sources" claiming until the "Curator" confirms.
+Instead of an "If" block asking if Curator confirmed winner and then having to do something if Curator says "no", let's use a "When".
+In that case, the contract waits for the Curator to confirm. Hopefully that means we can have multiple iterations of people claiming to be the winner.
+The Curator will only confirm when it's the correct winner.
+
 
 
 
