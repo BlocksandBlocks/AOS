@@ -38,6 +38,7 @@ The front end then tells the Bounty Maker to go make the declaration of an "Inte
 IDEA: maybe we rename this choice to "Declare Intel Bounty".
 Then the NFT Curator chooses to accept the Bounty or not.
 If he accepts then the Bounty Maker can make the deposit.
+Then the AOS website would just need a list of Curated Topics and the Address for the contract for each Curated Topic.
 
 
 
