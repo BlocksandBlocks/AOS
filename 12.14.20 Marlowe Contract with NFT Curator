@@ -26,6 +26,7 @@ Maybe we just manually input the public key for the address holding the NFT into
 This assumes that we deploy a separate contract for every NFT purchaser (i.e. curator).
 
 
+
 When
     [Case
         (Choice
@@ -114,11 +115,8 @@ When
                                                                 (Role "Bounty Maker")
                                                                 (Account (Role "Intel Source"))
                                                                 (Token "" "")
-                                                                (MulValue
-                                                                    (Scale
-                                                                        (9%10)
-                                                                        (Constant 1)
-                                                                    )
+                                                                (Scale
+                                                                    (9%10)
                                                                     (ChoiceValue
                                                                         (ChoiceId
                                                                             "Bounty Amount"
@@ -129,11 +127,8 @@ When
                                                                     (Role "Bounty Maker")
                                                                     (Party (Role "Curator"))
                                                                     (Token "" "")
-                                                                    (MulValue
-                                                                        (Scale
-                                                                            (1%10)
-                                                                            (Constant 1)
-                                                                        )
+                                                                    (Scale
+                                                                        (1%10)
                                                                         (ChoiceValue
                                                                             (ChoiceId
                                                                                 "Bounty Amount"
