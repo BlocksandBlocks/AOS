@@ -1,12 +1,13 @@
 --To look at this contract in blockly, paste the code below at: https://alpha.marlowe.iohkdev.io/#/simulation
 
 --Hurdle:
---How do we only allow the correct NFT Curator to act in that role?
+--How do we only allow the correct NFT Curator to act in that role without having an individual contract for each NFT?
 
 --Answer
 --We create a "correctCurator a xs = elem a [xs]" haskell function.  The elem built-in function searches for an element ("a") in a list ("xs") and gives a bool ("elem :: a-> [a] -> Bool").
 --We can just make [xs] a manually created list of all the addresses of the curators holding the curation NFTs. 
 --This would be a hacky not-quite-right short term way of doing this until we figure out how NFT detection is supposed to work on Cardano.
+--But, how do we keep another Curator from snagging someone else's Bounty?  Maybe we need individual contracts after all.  
 
 
 module Main where
@@ -27,11 +28,16 @@ main = setCode (prettyPrintContract contract)
 checkCurator :: a -> [a] -> Bool
 checkCurator a xs = elem a [xs]
 
+--xs (for now) will be a manual list of curators.  We will batch them (i.e. "you 200 hundred use this contract).
+--But then how do we keep the Cuarators from snagging each other's bounties???  A code or something between Bounty Maker and Curator?
+
 correctCurator :: (a) -> Bool
 correctCurator x = 
   case checkCurator x == 
     False -> close
     True  -> 
+
+--okay, next I gotta get lines 27-37 above (basically the checkCurator and correctCurator functions) under the "When" case of the "contract" function below.
 
 contract :: Contract
 contract = 
