@@ -18,17 +18,12 @@
 module Main where
 
 import Language.Marlowe
-import Fay.FFI (ffi)
 
-setCode :: String -> Fay ()
-setCode = ffi "textarea.setValue(%1)"
 
-main :: Fay ()
-main = setCode (prettyPrintContract contract)
 
--------------------------------------
--- Write your code below this line --
--------------------------------------
+main :: IO ()
+main = print . pretty $ contract
+
 
 checkCurator= :: a -> [a] -> Bool
 checkCurator a xs = elem a [xs]
