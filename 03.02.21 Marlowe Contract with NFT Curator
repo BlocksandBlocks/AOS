@@ -4,13 +4,39 @@
 --How do we only allow the correct NFT Curator to act in that role?
 
 --Answer
---We create a "correctCurator a xs = elem a [xs]" haskell function.  The elem built-in function searches for an element ("a") in a list ("xs") and gives a bool ("elem :: x-> [x] -> Bool").
+--We create a "correctCurator a xs = elem a [xs]" haskell function.  The elem built-in function searches for an element ("a") in a list ("xs") and gives a bool ("elem :: a-> [a] -> Bool").
 --We can just make [xs] a manually created list of all the addresses of the curators holding the curation NFTs. 
 --This would be a hacky not-quite-right short term way of doing this until we figure out how NFT detection is supposed to work on Cardano.
 
 
+module Main where
 
+import Marlowe
+import Fay.FFI (ffi)
 
+setCode :: String -> Fay ()
+setCode = ffi "textarea.setValue(%1)"
+
+main :: Fay ()
+main = setCode (prettyPrintContract contract)
+
+-------------------------------------
+-- Write your code below this line --
+-------------------------------------
+
+checkCurator :: a -> [a] -> Bool
+checkCurator a xs = elem a [xs]
+
+correctCurator :: (a) -> Bool
+correctCurator x = 
+  case checkCurator x == 
+    False -> close
+    True  -> 
+
+contract :: Contract
+contract = 
+
+--obviously fix indentation here.
 
 When
     [Case
