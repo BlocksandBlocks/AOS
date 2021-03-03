@@ -1,4 +1,4 @@
---To look at this contract in blockly, paste the code below at: https://alpha.marlowe.iohkdev.io/#/simulation
+--To look at this contract in blockly, paste the Marlowe code below at: https://alpha.marlowe.iohkdev.io/#/simulation
 
 --Hurdle:
 --How do we only allow the correct NFT Curator to act in that role without having an individual contract for each NFT?
@@ -6,44 +6,38 @@
 --Answer
 --We create a "correctCurator a xs = elem a [xs]" haskell function.  The elem built-in function searches for an element ("a") in a list ("xs") and gives a bool ("elem :: a-> [a] -> Bool").
 --We can just make [xs] a manually created list of all the addresses of the curators holding the curation NFTs. 
---This would be a hacky not-quite-right short term way of doing this until we figure out how NFT detection is supposed to work on Cardano.
---But, how do we keep another Curator from snagging someone else's Bounty?  Maybe we need individual contracts after all.  
+--We will batch them (i.e. "you 200 Curators use this contract).
+--But, Q: how do we keep another Curator from snagging someone else's Bounty? 
 
---Better Answer:
---We still do the batching like this.  But, we use pattern matching with guards for each possible NFT, then let the Bounty Maker choose from 1-999
+--Answer:
+--We still do the batching as above.  But, we use pattern matching with guards for each possible NFT, then let the Bounty Maker choose from 1-200.
 --with each number corresponding to a topical category and a particular NFT Curator.  Then, we define the Curator as the one corresponding to that choice via guards.
-
+--Role tokens are built into Marlowe as can be seen when you hover over "Role" in the Marlowe Playground "Simulator page at the address above.
 
 
 module Main where
 
 import Language.Marlowe
 
-
-
 main :: IO ()
 main = print . pretty $ contract
 
+--This is just sample language below since we don't know how Role Tokens will actually work (see hover note on "Role" in Marlowe Playground Simulator as above).
 
-checkCurator= :: a -> [a] -> Bool
-checkCurator a xs = elem a [xs]
+checkCurator= :: integer -> IO ()
+checkCurator x
+  | x == 1     = "Denver LoDo Token"
+  | x == 2     = "LA Westwood Token"
+  | x == 3     = "San Diego PB Token"
+  | otherwise  = Close
 
---xs (for now) will be a manual list of curators.  We will batch them (i.e. "you 200 hundred use this contract).
---But then how do we keep the Cuarators from snagging each other's bounties???  A code or something between Bounty Maker and Curator?
---You use guards (as discussed in note under "Better Answer") to have Bounty Maker select topical category.
-
-correctCurator :: (a) -> IO ()
-correctCurator x = 
-  case checkCurator x == 
-    False -> x /= Curator
-    True  -> x == Curator
-
---okay, next I gotta get lines 27-37 above (basically the checkCurator and correctCurator functions) under the "When" case of the "contract" function below.
+--okay, how do we get the Marlowe code to call the "checkCurator" function above?
 
 contract :: Contract
 contract = 
 
 --obviously fix indentation here.
+--Marlowe code begins below.
 
 When
     [Case
