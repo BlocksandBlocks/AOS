@@ -1,19 +1,21 @@
---To look at this contract in blockly, paste the Marlowe code below at: https://alpha.marlowe.iohkdev.io/#/simulation
+{-
+To look at this contract in blockly, paste the Marlowe code below at: https://alpha.marlowe.iohkdev.io/#/simulation
 
---Hurdle:
---How do we only allow the correct NFT Curator to act in that role without having an individual contract for each NFT?
+Hurdle:
+How do we only allow the correct NFT Curator to act in that role without having an individual contract for each NFT?
 
---Answer
---We create a "correctCurator a xs = elem a [xs]" haskell function.  The elem built-in function searches for an element ("a") in a list ("xs") and gives a bool ("elem :: a-> [a] -> Bool").
---We can just make [xs] a manually created list of all the addresses of the curators holding the curation NFTs. 
---We will batch them (i.e. "you 200 Curators use this contract).
---But, Q: how do we keep another Curator from snagging someone else's Bounty? 
+Answer
+We create a "correctCurator a xs = elem a [xs]" haskell function.  
+The elem built-in function searches for an element ("a") in a list ("xs") and gives a bool ("elem :: a-> [a] -> Bool").
+We can just make [xs] a manually created list of all the addresses of the curators holding the curation NFTs. 
+We will batch them (i.e. "you 200 Curators use this contract).
+But, Q: how do we keep another Curator from snagging someone else's Bounty? 
 
---Answer:
---We still do the batching as above.  But, we use pattern matching with guards for each possible NFT, then let the Bounty Maker choose from 1-200.
---with each number corresponding to a topical category and a particular NFT Curator.  Then, we define the Curator as the one corresponding to that choice via guards.
---Role tokens are built into Marlowe as can be seen when you hover over "Role" in the Marlowe Playground "Simulator page at the address above.
-
+Answer:
+We still do the batching as above.  But, we use pattern matching with guards for each possible NFT, then let the Bounty Maker choose from 1-200
+with each number corresponding to a topical category and a particular NFT Curator.  Then, we define the Curator as the one corresponding to that choice via guards.
+Role tokens are built into Marlowe as can be seen when you hover over "Role" in the Marlowe Playground "Simulator page at the address above.
+-}
 
 module Main where
 
@@ -22,7 +24,7 @@ import Language.Marlowe
 main :: IO ()
 main = print . pretty $ contract
 
---This is just sample language below since we don't know how Role Tokens will actually work (see hover note on "Role" in Marlowe Playground Simulator as above).
+-- This is just sample language below since we don't know how Role Tokens will actually work (see hover note on "Role" in Marlowe Playground Simulator as above).
 
 checkCurator :: integer -> IO ()
 checkCurator x
@@ -31,13 +33,13 @@ checkCurator x
   | x == 3     = "San Diego PB Token"
   | otherwise  = Close
 
---okay, how do we get the Marlowe code to call the "checkCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
+-- okay, how do we get the Marlowe code to call the "checkCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
 
 contract :: Contract
 contract = 
 
---obviously fix indentation here.
---Marlowe code begins below.
+-- obviously fix indentation here.
+-- Marlowe code begins below.
 
 When
     [Case
