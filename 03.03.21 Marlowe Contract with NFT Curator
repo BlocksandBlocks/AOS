@@ -24,7 +24,7 @@ main = print . pretty $ contract
 
 --This is just sample language below since we don't know how Role Tokens will actually work (see hover note on "Role" in Marlowe Playground Simulator as above).
 
-checkCurator= :: integer -> IO ()
+checkCurator :: integer -> IO ()
 checkCurator x
   | x == 1     = "Denver LoDo Token"
   | x == 2     = "LA Westwood Token"
