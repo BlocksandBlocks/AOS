@@ -25,6 +25,7 @@ main :: IO ()
 main = print . pretty $ contract
 
 -- The syntax for this chooseCurator function came from definition of choiceIdExample found in github.com/input-output-hk/marlowe/blob/master/src/Main.hs
+-- HURDLE: the ChoiceId of "Choose Curator" by "Bounty Maker" may not be in scope outside of the contract. Damn.  
 
 chooseCurator :: ChoiceId 
 chooseCurator = ChoiceId "Choose Curator" "Bounty Maker"
