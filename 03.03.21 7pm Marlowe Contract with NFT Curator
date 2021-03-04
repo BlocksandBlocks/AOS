@@ -33,8 +33,8 @@ chooseCurator = ChoiceId "Choose Curator" "Bounty Maker"
   | x == 3     =         --Insert Pubkey for San Diego PB Token Holder
   | x == 4     =         --Insert Pubkey for Orange County Token Holder
   
- Curator :: Party
- Curator = chooseCurator
+Curator :: Party
+Curator = chooseCurator
 
 -- Q: okay, how do we get the Marlowe code to call the "chooseCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
 -- A: Deleted this language: "(ChoiceId "Choose Curator" (Role "Bounty Maker"))" and replaced it with "(chooseCurator)"
