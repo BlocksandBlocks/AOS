@@ -1,0 +1,232 @@
+{-
+To look at this contract in blockly, paste the Marlowe code below at: https://alpha.marlowe.iohkdev.io/#/simulation
+
+Hurdle:
+How do we only allow the correct NFT Curator to act in that role without having an individual contract for each NFT?
+
+Answer
+We create a "correctCurator a xs = elem a [xs]" haskell function.  
+The elem built-in function searches for an element ("a") in a list ("xs") and gives a bool ("elem :: a-> [a] -> Bool").
+We can just make [xs] a manually created list of all the addresses of the curators holding the curation NFTs. 
+We will batch them (i.e. "you 200 Curators use this contract).
+But, Q: how do we keep another Curator from snagging someone else's Bounty? 
+
+Answer:
+We still do the batching as above.  But, we use pattern matching with guards for each possible NFT, then let the Bounty Maker choose from 1-200 or etc
+with each number corresponding to a topical category and a particular NFT Curator.  Then, we define the Curator as the one corresponding to that choice via guards.
+Role tokens are built into Marlowe as can be seen when you hover over "Role" in the Marlowe Playground "Simulator page at the address above.
+-}
+
+module Main where
+
+import Language.Marlowe
+
+main :: IO ()
+main = print . pretty $ contract
+
+-- The syntax for this chooseCurator function came from definition of choiceIdExample found in github.com/input-output-hk/marlowe/blob/master/src/Main.hs
+-- POSSIBLE HURDLE: the ChoiceId of "Choose Curator" by "Bounty Maker" may not be in scope outside of the contract.  
+
+chooseCurator :: ChoiceId 
+chooseCurator = ChoiceId "Choose Curator" "Bounty Maker"
+  | x == 1     =         --Insert Pubkey for Denver LoDo Token Holder
+  | x == 2     =         --Insert Pubkey for LA Westwood Token Holder
+  | x == 3     =         --Insert Pubkey for San Diego PB Token Holder
+  | x == 4     =         --Insert Pubkey for Orange County Token Holder
+  
+Curator :: Party
+Curator = chooseCurator
+
+-- Q: okay, how do we get the Marlowe code to call the "chooseCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
+-- A: Deleted this language: "(ChoiceId "Choose Curator" (Role "Bounty Maker"))" and replaced it with "(chooseCurator)"
+--Bounds on chooseCurator in Marlowe below should be equal to the number of choices in the guards.
+
+contract :: Contract
+contract = When
+    [Case
+        (Choice
+            (chooseCurator)
+            [Bound 0 999]
+        )
+        (When
+            [Case
+                (Choice
+                    (ChoiceId
+                        "Choose Bounty Amount"
+                        (Role "Bounty Maker")
+                    )
+                    [Bound 1 1000]
+                )
+                (When
+                    [Case
+                        (Deposit
+                            (Role "Bounty Maker")
+                            (Role "Bounty Maker")
+                            (Token "" "")
+                            (ChoiceValue
+                                (ChoiceId
+                                    "Bounty Amount"
+                                    (Role "Bounty Maker")
+                                ))
+                        )
+                        (When
+                            [Case
+                                (Choice
+                                    (ChoiceId
+                                        "Curator Intel Source Selection"
+                                        (Role "Curator")
+                                    )
+                                    [Bound 0 1]
+                                )
+                                (If
+                                    (ValueEQ
+                                        (ChoiceValue
+                                            (ChoiceId
+                                                "Curator Intel Source Selection"
+                                                (Role "Curator")
+                                            ))
+                                        (Constant 1)
+                                    )
+                                    (When
+                                        [Case
+                                            (Choice
+                                                (ChoiceId
+                                                    "Intel Source Claims Intel Bounty"
+                                                    (Role "Intel Source")
+                                                )
+                                                [Bound 0 1]
+                                            )
+                                            (If
+                                                (ValueEQ
+                                                    (ChoiceValue
+                                                        (ChoiceId
+                                                            "Intel Source Claims Intel Bounty"
+                                                            (Role "Intel Source")
+                                                        ))
+                                                    (Constant 1)
+                                                )
+                                                (When
+                                                    [Case
+                                                        (Choice
+                                                            (ChoiceId
+                                                                "Confirm Intel Source Won"
+                                                                (Role "Curator")
+                                                            )
+                                                            [Bound 0 1]
+                                                        )
+                                                        (If
+                                                            (ValueEQ
+                                                                (ChoiceValue
+                                                                    (ChoiceId
+                                                                        "Confirm Intel Source Won"
+                                                                        (Role "Curator")
+                                                                    ))
+                                                                (Constant 1)
+                                                            )
+                                                            (Pay
+                                                                (Role "Bounty Maker")
+                                                                (Account (Role "Intel Source"))
+                                                                (Token "" "")
+                                                                (Scale
+                                                                    (9%10)
+                                                                    (ChoiceValue
+                                                                        (ChoiceId
+                                                                            "Bounty Amount"
+                                                                            (Role "Bounty Maker")
+                                                                        ))
+                                                                )
+                                                                (Pay
+                                                                    (Role "Bounty Maker")
+                                                                    (Party (Role "Curator"))
+                                                                    (Token "" "")
+                                                                    (Scale
+                                                                        (1%10)
+                                                                        (ChoiceValue
+                                                                            (ChoiceId
+                                                                                "Bounty Amount"
+                                                                                (Role "Bounty Maker")
+                                                                            ))
+                                                                    )
+                                                                    Close 
+                                                                )
+                                                            )
+                                                            (Pay
+                                                                (Role "Bounty Maker")
+                                                                (Account (Role "Bounty Maker"))
+                                                                (Token "" "")
+                                                                (ChoiceValue
+                                                                    (ChoiceId
+                                                                        "Bounty Amount"
+                                                                        (Role "Bounty Maker")
+                                                                    ))
+                                                                Close 
+                                                            )
+                                                        )]
+                                                    3500
+                                                    (Pay
+                                                        (Role "Bounty Maker")
+                                                        (Party (Role "Bounty Maker"))
+                                                        (Token "" "")
+                                                        (ChoiceValue
+                                                            (ChoiceId
+                                                                "Bounty Amount"
+                                                                (Role "Bounty Maker")
+                                                            ))
+                                                        Close 
+                                                    )
+                                                )
+                                                (Pay
+                                                    (Role "Bounty Maker")
+                                                    (Party (Role "Bounty Maker"))
+                                                    (Token "" "")
+                                                    (ChoiceValue
+                                                        (ChoiceId
+                                                            "Bounty Amount"
+                                                            (Role "Bounty Maker")
+                                                        ))
+                                                    Close 
+                                                )
+                                            )]
+                                        3000
+                                        (Pay
+                                            (Role "Bounty Maker")
+                                            (Party (Role "Bounty Maker"))
+                                            (Token "" "")
+                                            (ChoiceValue
+                                                (ChoiceId
+                                                    "Bounty Amount"
+                                                    (Role "Bounty Maker")
+                                                ))
+                                            Close 
+                                        )
+                                    )
+                                    (Pay
+                                        (Role "Bounty Maker")
+                                        (Party (Role "Bounty Maker"))
+                                        (Token "" "")
+                                        (ChoiceValue
+                                            (ChoiceId
+                                                "Bounty Amount"
+                                                (Role "Bounty Maker")
+                                            ))
+                                        Close 
+                                    )
+                                )]
+                            2500
+                            (Pay
+                                (Role "Bounty Maker")
+                                (Party (Role "Bounty Maker"))
+                                (Token "" "")
+                                (ChoiceValue
+                                    (ChoiceId
+                                        "Bounty Amount"
+                                        (Role "Bounty Maker")
+                                    ))
+                                Close 
+                            )
+                        )]
+                    2000 Close 
+                )]
+            1500 Close 
+        )]
+    1000 Close  
