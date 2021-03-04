@@ -37,7 +37,7 @@ chooseCurator = ChoiceId "Choose Curator" "Bounty Maker"
  Curator = chooseCurator
 
 -- Q: okay, how do we get the Marlowe code to call the "chooseCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
--- A: I deleted this language: "(ChoiceId "Choose Curator" (Role "Bounty Maker"))" and replaced it with "(chooseCurator)"
+-- A: Deleted this language: "(ChoiceId "Choose Curator" (Role "Bounty Maker"))" and replaced it with "(chooseCurator)"
 --Bounds on chooseCurator in Marlowe below should be equal to the number of choices in the guards.
 
 contract :: Contract
