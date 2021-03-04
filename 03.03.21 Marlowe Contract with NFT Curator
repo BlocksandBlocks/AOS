@@ -26,14 +26,14 @@ main = print . pretty $ contract
 
 -- This is just sample language below since we don't know how Role Tokens will actually work (see hover note on "Role" in Marlowe Playground Simulator as above).
 
-checkCurator :: integer -> IO ()
-checkCurator x
+chooseCurator :: Role
+chooseCurator x
   | x == 1     = "Denver LoDo Token"
   | x == 2     = "LA Westwood Token"
   | x == 3     = "San Diego PB Token"
-  | otherwise  = Close
+  | otherwise  = "No Curator Chosen"
 
--- okay, how do we get the Marlowe code to call the "checkCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
+-- okay, how do we get the Marlowe code to call the "chooseCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
 
 contract :: Contract
 contract = When
