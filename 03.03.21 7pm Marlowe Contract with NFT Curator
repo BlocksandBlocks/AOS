@@ -24,25 +24,26 @@ import Language.Marlowe
 main :: IO ()
 main = print . pretty $ contract
 
--- This is just sample language below since we don't know how Role Tokens will actually work (see hover note on "Role" in Marlowe Playground Simulator as above).
+-- The syntax for this chooseCurator function came from definition of choiceIdExample found in github.com/input-output-hk/marlowe/blob/master/src/Main.hs
 
-chooseCurator :: ChoiceId
+chooseCurator :: ChoiceId 
 chooseCurator = ChoiceId "Choose Curator" "Bounty Maker"
-  | x == 1     = "Denver LoDo Token"
-  | x == 2     = "LA Westwood Token"
-  | x == 3     = "San Diego PB Token"
-  | otherwise  = "No Curator Chosen"
+  | x == 1     =         --Insert Pubkey for Denver LoDo Token Holder
+  | x == 2     =         --Insert Pubkey for LA Westwood Token Holder
+  | x == 3     =         --Insert Pubkey for San Diego PB Token Holder
+  | x == 4     =         --Insert Pubkey for Orange County Token Holder
+  
+ Curator :: Party
+ Curator = chooseCurator
 
--- okay, how do we get the Marlowe code to call the "chooseCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
+-- Q: okay, how do we get the Marlowe code to call the "chooseCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
+-- A: I deleted this language: "(ChoiceId "Choose Curator" (Role "Bounty Maker"))" and replaced it with "(chooseCurator)"   
 
 contract :: Contract
 contract = When
     [Case
         (Choice
-            (ChoiceId
-                "Choose Curator"
-                (Role "Bounty Maker")
-            )
+            (chooseCurator)
             [Bound 0 999]
         )
         (When
