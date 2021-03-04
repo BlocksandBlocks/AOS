@@ -36,12 +36,7 @@ checkCurator x
 -- okay, how do we get the Marlowe code to call the "checkCurator" function above (this is to verify which Curator in the series is correct for the Bounty)?
 
 contract :: Contract
-contract = 
-
--- obviously fix indentation here.
--- Marlowe code begins below.
-
-When
+contract = When
     [Case
         (Choice
             (ChoiceId
